@@ -1,0 +1,617 @@
+<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Komisje przesłuchań NFM</title><link rel="preconnect" href="https://fonts.googleapis.com"><style>body{margin:0}img{max-width:100%}</style><style>
+/* Layout: scena (mapa SVG) po lewej, panel komisji po prawej; legenda pod sceną. */
+:root{
+  --bg:#eef1f5; --surface:#ffffff; --fg:#1a2230; --muted:#5d6878; --line:#d5dbe4;
+  --stage:#e8dccb; --stage-edge:#c9b79c; --seat:#f7f4ee; --seat-stroke:#9a8a72; --seat-text:#3a3226;
+  --mand:#06401B; --add:#4CAF6A; --add-ink:#2F8A4C; --add-text:#ffffff; --ring:#ffffff; --sel:#E0303A; --none:#DADDE2; --none-text:#7a8494;
+  --on-color:#ffffff; --accent:#1F7A3C;
+  --f-display:"Bricolage Grotesque", "Archivo", system-ui, sans-serif;
+  --f-body:"Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12161d; --surface:#1a2029; --fg:#e7ebf1; --muted:#97a2b3; --line:#2c3441;
+  --stage:#2b261f; --stage-edge:#4a4033; --seat:#3a342b; --seat-stroke:#8a7a62; --seat-text:#efe6d6;
+  --mand:#0B5525; --add:#4CAF6A; --add-ink:#7CCB93; --add-text:#ffffff; --ring:#ffffff; --sel:#EF4651; --none:#353c48; --none-text:#8994a5;
+  --on-color:#ffffff; --accent:#5FD08A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12161d; --surface:#1a2029; --fg:#e7ebf1; --muted:#97a2b3; --line:#2c3441;
+  --stage:#2b261f; --stage-edge:#4a4033; --seat:#3a342b; --seat-stroke:#8a7a62; --seat-text:#efe6d6;
+  --mand:#0B5525; --add:#4CAF6A; --add-ink:#7CCB93; --add-text:#ffffff; --ring:#ffffff; --sel:#EF4651; --none:#353c48; --none-text:#8994a5;
+  --on-color:#ffffff; --accent:#5FD08A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14px;line-height:1.45}
+.wrap{max-width:1440px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;margin-bottom:16px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(22px,3vw,30px);margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);margin:4px 0 0;max-width:70ch}
+.modes{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px}
+.modes button{font:inherit;font-weight:600;border:0;background:transparent;color:var(--muted);padding:7px 12px;border-radius:7px;cursor:pointer}
+.modes button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.modes button:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:16px;align-items:start}
+@media (max-width:980px){.layout{grid-template-columns:minmax(0,1fr)}.leftcol{display:contents}#nojs{order:0}.stage-card{order:1}.panel{order:2}.legend{order:3;margin-top:0}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.stage-card{padding:12px;min-width:0}
+.stage-scroll{overflow-x:auto}
+svg#stage{display:block;width:100%;min-width:720px;height:auto}
+.zoombtn{display:none}
+#nojs{border:2px solid var(--sel);border-radius:10px;padding:12px 14px;margin:0 0 14px;background:var(--surface);font-size:15px;line-height:1.45}
+#mbar{display:none}
+@media (max-width:760px){
+  .wrap{padding-block:12px 96px}
+  header{margin-bottom:10px}
+  .modes{width:100%}
+  .modes button{flex:1}
+  .stage-card{padding:6px}
+  svg#stage{min-width:0}
+  .stage-card.zoomed svg#stage{min-width:820px}
+  .zoombtn{display:inline-flex;margin:8px 0 0}
+  .tally .n{font-size:21px}
+  #mbar{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;align-items:center;gap:10px;background:var(--fg);color:var(--bg);
+    padding:10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));box-shadow:0 -4px 16px rgba(0,0,0,.2)}
+  #mbar .t{flex:1;min-width:0;font-size:13px;line-height:1.3}
+  #mbar .t b{display:block;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #mbar button{font:inherit;font-weight:600;font-size:13.5px;border:0;border-radius:8px;padding:9px 12px;background:var(--bg);color:var(--fg);flex:none}
+  #mbar .bad{color:#ff8a8a;font-weight:600}
+}
+.seat{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.seat .hit{fill:transparent}
+.seat circle.body{fill:var(--seat);stroke:var(--seat-stroke);stroke-width:1.2;transition:fill .15s}
+.seat text{font:600 8.5px var(--f-body);fill:var(--seat-text);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.seat.lead circle.body{stroke-width:3}
+.seat:hover circle.body{stroke:var(--fg)}
+.seat:focus{outline:none}
+.seat:focus-visible circle.body{stroke:var(--accent);stroke-width:3.5}
+.seat.st-sec circle.body,.seat.st-rada circle.body,.seat.st-fam circle.body,.seat.st-addm circle.body{fill:var(--mand);stroke:var(--ring);stroke-width:2}
+.seat.st-opt circle.body,.seat.st-all circle.body{fill:var(--add);stroke:var(--ring);stroke-width:2}
+.seat.st-sel circle.body{fill:var(--sel);stroke:var(--fg);stroke-width:3}
+.seat.st-selm circle.body{fill:var(--mand);stroke:var(--sel);stroke-width:3.5}
+.seat.st-selm text{fill:var(--on-color)}
+.seat.st-none circle.body{fill:var(--none);stroke:var(--none)}
+.seat.st-sec text,.seat.st-rada text,.seat.st-fam text,.seat.st-addm text,.seat.st-sel text{fill:var(--on-color)}
+.seat.st-opt text,.seat.st-all text{fill:var(--add-text)}
+.seat.st-none text{fill:var(--none-text)}
+.seat.lead.st-addm circle.body,.seat.lead.st-sec circle.body,.seat.lead.st-rada circle.body,.seat.lead.st-fam circle.body,.seat.lead.st-opt circle.body,.seat.lead.st-all circle.body{stroke:var(--ring);stroke-width:3.5}
+.seat .ring{fill:none;stroke:var(--sel);stroke-width:2;opacity:0}
+.seat.st-sel .ring,.seat.st-selm .ring{opacity:1;animation:pulse 1.6s ease-out infinite}
+@keyframes pulse{0%{r:16;opacity:.9}100%{r:26;opacity:0}}
+@media (prefers-reduced-motion:reduce){.seat.st-sel .ring,.seat.st-selm .ring{animation:none;opacity:.6}}
+.seat .star{fill:var(--fg);stroke:var(--surface);stroke-width:1.2}
+.seat.editing circle.body{stroke:var(--accent);stroke-width:4}
+.stage-floor{fill:var(--stage);stroke:var(--stage-edge);stroke-width:2}
+.riser{fill:none;stroke:var(--stage-edge);stroke-width:1;stroke-dasharray:4 4}
+.lbl{font:600 11px var(--f-body);fill:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.podium{fill:var(--fg);transition:fill .15s}
+.podium-g{cursor:pointer}
+.podium-g:hover .podium{fill:var(--mand)}
+.podium-g:focus{outline:none}
+.podium-g:focus-visible .podium{stroke:var(--mand);stroke-width:3}
+.podium-t{font:600 9px var(--f-body);fill:var(--bg);text-anchor:middle;dominant-baseline:central}
+.offstage{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.offstage .cap{color:var(--muted);font-size:12px;margin-right:4px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px 4px 6px;font-size:13px;background:var(--surface)}
+.chip i{width:12px;height:12px;border-radius:50%;background:var(--none);display:inline-block}
+.chip.st-rada i{background:var(--mand)}
+/* Legenda */
+.legend{margin-top:16px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px}
+@media (max-width:760px){.legend{grid-template-columns:minmax(0,1fr)}}
+.legend h2,.panel h2{font-family:var(--f-display);font-size:17px;font-weight:700;margin:0 0 10px}
+.legend h3{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:14px 0 6px}
+.keys{display:grid;gap:7px;margin:0;padding:0;list-style:none}
+.keys li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start}
+.sw{width:20px;height:20px;border-radius:50%;border:2px solid transparent;margin-top:1px}
+.sw.sel{background:var(--sel);border-color:var(--fg)} .sw.mand{background:var(--mand)} .sw.add{background:var(--add)} .sw.none{background:var(--none)}
+.sw.lead{background:var(--seat);border:3px solid var(--seat-stroke)}
+.sw.star{background:none;border:0;display:flex;align-items:center;justify-content:center}
+.keys b{font-weight:600}
+.keys span.d{display:block;color:var(--muted);font-size:13px}
+.rules{margin:0;padding-left:20px;display:grid;gap:6px}
+.rules li{padding-left:2px}
+.grp{font-size:13px;color:var(--muted)}
+/* Panel */
+.panel{padding:16px;position:sticky;top:calc(env(safe-area-inset-top, 0px) + 12px);max-height:calc(100vh - 24px);overflow:auto;min-width:0}
+@media (max-width:980px){.panel{position:static;max-height:none}}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.target{font-family:var(--f-display);font-size:21px;font-weight:700;margin:2px 0 2px;line-height:1.2}
+.fam-tag{color:var(--muted);font-size:13px}
+.tally{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0}
+.tally>div{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.tally .n{font-family:var(--f-display);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.tally .t{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.25}
+.tally .m .n{color:var(--mand)} .tally .o .n{color:var(--add-ink)}
+.exc{border:1px solid var(--add-ink);background:color-mix(in srgb,var(--add) 14%,transparent);border-radius:10px;padding:10px 12px;margin:0 0 12px;font-size:13.5px}
+.warn{border:1px solid var(--sel);background:color-mix(in srgb,var(--sel) 10%,transparent);border-radius:10px;padding:8px 12px;margin:0 0 10px;font-size:13px}
+details{border-top:1px solid var(--line);padding:8px 0}
+details:last-of-type{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;display:flex;align-items:center;gap:8px;font-weight:600;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"▸";margin-left:auto;color:var(--muted);transition:transform .15s}
+details[open] summary::after{transform:rotate(90deg)}
+summary .dot{width:12px;height:12px;border-radius:50%;flex:none}
+summary .cnt{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:500}
+.plist{list-style:none;margin:8px 0 2px;padding:0;display:grid;gap:3px;font-size:13px}
+.plist li{display:flex;justify-content:space-between;gap:10px}
+.plist li span:last-child{color:var(--muted);text-align:right}
+.plist .note{color:var(--muted);font-style:italic}
+.subhead{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:8px 0 2px}
+.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:8px 12px;border-radius:8px;cursor:pointer}
+.btn.primary{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn.danger{color:var(--sel);border-color:var(--sel)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.empty{color:var(--muted)}
+.field{display:grid;gap:4px;margin:10px 0}
+.field label{font-size:12px;font-weight:600;color:var(--muted)}
+.field input,.field select,textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+textarea{min-height:90px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+.hint{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+.toast{font-size:12.5px;color:var(--mand);min-height:1em;margin-top:6px}
+.radalist{list-style:none;padding:0;margin:6px 0 0;display:grid;gap:4px;font-size:13px}
+.radalist li{display:flex;justify-content:space-between;gap:8px}
+.radalist li span:last-child{color:var(--muted);text-align:right}
+.par{font-size:11.5px;font-weight:600;margin-top:5px}
+.par.ok{color:var(--mand)} .par.bad{color:var(--sel)}
+.warn.parity{border-width:2px}
+.mini{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:2px 8px;border-radius:6px;cursor:pointer;flex:none}
+.mini:hover{border-color:var(--fg)}
+.mini:disabled{opacity:.35;cursor:default}
+.plist li{align-items:center}
+.counts{list-style:none;margin:6px 0 4px;padding:0;display:grid;gap:5px;font-size:13px}
+.counts li{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.counts em{font-style:normal;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:4px}
+.stepper{display:inline-flex;align-items:center;gap:6px;flex:none}
+.stepper b{min-width:22px;text-align:center;font-variant-numeric:tabular-nums}
+.stepper .mini{width:28px;padding:2px 0;font-size:15px;line-height:1.2}
+.secedit{padding:6px 0}
+.editbox{border:1px solid var(--accent);border-radius:10px;padding:10px 12px;margin-bottom:12px}
+.note{color:var(--muted);font-style:italic}
+.pubbox{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:12px 0}
+.sync{font-size:12.5px;border-radius:8px;padding:6px 10px;margin:0 0 12px;border:1px solid var(--line);color:var(--muted)}
+.sync.ok{border-color:var(--mand);color:var(--fg)}
+.sync.ro{border-color:var(--add);color:var(--fg)}
+.ro-mode .editbox{display:none}
+.ro-mode .stepper .mini,.ro-mode #radaSel,.ro-mode #impBtn,.ro-mode #resetBtn,.ro-mode #importBox{display:none}
+.sync.bad{border-color:var(--sel);color:var(--fg)}
+#tip{position:fixed;z-index:20;pointer-events:none;max-width:280px;background:var(--fg);color:var(--bg);border-radius:8px;padding:8px 11px;font-size:12.5px;line-height:1.35;display:grid;gap:2px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#tip[hidden],[hidden]{display:none!important}
+#tip b{font-size:14px;font-weight:600}
+#tip span{opacity:.85}
+#tip .st{opacity:1;font-weight:600;margin-top:3px}
+</style></head><body><div class="wrap">
+  <header>
+    <div>
+      <h1>Komisje przesłuchań NFM</h1>
+      <p class="sub">Kliknij stanowisko na mapie orkiestry, aby wyznaczyć skład komisji obowiązkowej i listę osób uprawnionych do głosowania.</p>
+    </div>
+    <div class="modes" role="group" aria-label="Tryb pracy" hidden="">
+      <button type="button" id="modeAudit" aria-pressed="false">Przesłuchanie</button>
+      <button type="button" id="modeEdit" aria-pressed="true">Skład orkiestry</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="leftcol" style="min-width:0">
+      
+      <div id="nojs"><b>Narzędzie nie uruchomiło się w tym podglądzie.</b> Na iPhonie podgląd załącznika w Poczcie lub w aplikacji Pliki nie uruchamia narzędzia. Otwórz narzędzie z adresu internetowego, pod którym zostało opublikowane (link w przeglądarce Safari), albo otwórz plik na komputerze.</div><section class="card stage-card" aria-label="Mapa orkiestry">
+        <div class="stage-scroll"><svg id="stage" viewBox="30 30 940 600" role="group" aria-label="Rozmieszczenie orkiestry na scenie"></svg></div>
+        <button type="button" class="btn zoombtn" id="zoomBtn" aria-pressed="false">Powiększ mapę</button>
+        <div class="offstage" id="offstage"></div>
+      </section>
+
+      <section class="card legend" aria-label="Legenda">
+        <div>
+          <h2>Legenda kolorów</h2>
+          <ul class="keys">
+            <li><span class="sw sel"></span><div><b>Stanowisko przesłuchiwane</b><span class="d">Wybrane miejsce (wakat). Nie wchodzi do komisji.</span></div></li>
+            <li><span class="sw mand"></span><div><b>Komisja obowiązkowa</b><span class="d">Cała sekcja + Rada Artystyczna + liderzy grup (+ osoba dodana dla nieparzystego składu).</span></div></li>
+            <li><span class="sw add"></span><div><b>Głos dodatkowy</b><span class="d">Liderzy pozostałych grup: mogą przyjść i głosować, udział nieobowiązkowy. Przy przesłuchaniu na koncertmistrza: każdy pozostały członek orkiestry.</span></div></li>
+            <li><span class="sw none"></span><div><b>Bez głosu</b><span class="d">Osoba nie jest uprawniona do głosowania w tym przesłuchaniu.</span></div></li>
+          </ul>
+          <h3>Oznaczenia stałe</h3>
+          <ul class="keys">
+            <li><span class="sw lead"></span><div><b>Gruba obwódka</b><span class="d">Stanowisko lidera: koncertmistrz, prowadzący, I głos w dętych, tuba, harfa, kotły.</span></div></li>
+            <li><span class="sw star"><svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><path d="M0,-7 L2,-2.2 7,-2.2 3,1 4.5,6 0,3 -4.5,6 -3,1 -7,-2.2 -2,-2.2Z" fill="var(--fg)"></path></svg></span><div><b>Gwiazdka</b><span class="d">Członek Rady Artystycznej (manager orkiestry jest pod mapą, poza sceną).</span></div></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Zasady działania</h2>
+          <ol class="rules">
+            <li><b>Wybór stanowiska.</b> Kliknięcie miejsca na scenie oznacza, że przesłuchanie jest na to stanowisko. Mapa i panel po prawej przeliczają się automatycznie. Kliknięcie Dyrygenta czyści wybór i mapa wraca do stanu bez kolorów.</li>
+            <li><b>Komisja obowiązkowa</b> = cała sekcja danej grupy + Rada Artystyczna + liderzy grup:
+              <div class="grp">smyczki → liderzy wszystkich grup smyczkowych (koncertmistrzowie i prowadzący I i II skrzypiec, altówek, wiolonczel, kontrabasów);<br>
+              dęte drewniane → liderzy fletów, obojów, klarnetów, fagotów;<br>
+              dęte blaszane, perkusja, kotły i harfa → liderzy waltorni, trąbek, puzonów, tuby, kotłów i harfy.</div></li>
+            <li><b>Rada Artystyczna</b> (gwiazdka): Koncertmistrz (1), Altówka (1) za smyczki, I fagot (2) za dęte drewniane, I waltornia (2) za dęte blaszane, Perkusja (1), Kontrabas (1) jako inspektor orkiestry oraz manager orkiestry (administracja, poza sceną). Zmiany wprowadza się w trybie „Skład orkiestry”: kliknij miejsce na mapie i wybierz funkcję w Radzie.</li>
+            <li><b>Nieparzysty skład</b>: komisja obowiązkowa musi liczyć nieparzystą liczbę osób. Gdy wychodzi parzysta, narzędzie pokazuje ostrzeżenie i pozwala dodać jedną osobę z prawem głosu przyciskiem „Dodaj do komisji”. Dodana osoba liczy się do komisji obowiązkowej i jest oznaczona na niebiesko.</li>
+            <li><b>Zmiana składu orkiestry</b>: w trybie „Skład orkiestry” można dodawać i usuwać stanowiska w każdej sekcji, np. po przesłuchaniach albo przy powiększeniu lub zmniejszeniu sekcji. Mapa i komisje przeliczają się od razu. Skład jest wspólny: zmianę widzą wszyscy użytkownicy na każdym urządzeniu, ale wprowadzać ją mogą tylko osoby z uprawnieniami edycji. Pozostali widzą ten tryb jako podgląd.</li>
+            <li><b>Głos dodatkowy</b>: na każde przesłuchanie może przyjść lider z dowolnej grupy i głosować. Jego udział nie jest obowiązkowy.</li>
+            <li><b>Wyjątek – koncertmistrz</b>: przy przesłuchaniu na stanowisko koncertmistrza głosuje każdy członek orkiestry, każdy ma jeden pełny głos.</li>
+            <li><b>Wyjątek – perkusja i kotły</b>: przy przesłuchaniu na kotły lub perkusję komisję obowiązkową tworzą: kotły, cała perkusja, Rada Artystyczna oraz wszyscy liderzy dętych drewnianych i blaszanych (fletów, obojów, klarnetów, fagotów, waltorni, trąbek, puzonów i tuby). Pozostali liderzy mają głos dodatkowy, nieobowiązkowy.</li>
+            <li><b>Wyjątek – harfa</b>: harfa należy do grupy perkusji i kotłów i ma osobne stanowisko lidera. Przy przesłuchaniu na harfę komisję obowiązkową tworzą: harfa, Rada Artystyczna oraz liderzy dętych drewnianych, dętych blaszanych i kotłów (perkusja nie ma lidera). Na mapie harfa jest wtedy niebieska z czerwoną obwódką.</li>
+          </ol>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" id="panel" aria-live="polite"></aside>
+<div id="tip" role="tooltip" hidden=""></div>
+<div id="mbar" hidden=""></div>
+  </div>
+</div><script>window.__NFM_PUBLIC__={"cfg":{"counts":{"vn1":[3,2,14],"vn2":[2,12],"vla":[2,12],"vc":[2,1,9],"cb":[2,6],"fl":[2,1,1],"ob":[2,1,1],"cl":[2,1,1],"fg":[2,1,1],"hn":[3,2,2],"tp":[2,3],"tb":[2,1,1],"tu":[1],"hp":[1],"perc":[5],"timp":[2]},"rada":{"cm":"vn1-0-1","str":"vla-1-1","wood":"fg-0-2","brass":"hn-0-2","perc":"perc-0-1","insp":"cb-1-1"}},"date":"20.10.2026"};</script><script>
+(function(){
+const NS="http://www.w3.org/2000/svg";
+const FAM_NAMES={perc:"perkusja i kotły (wyjątek)",harp:"harfa (wyjątek)",str:"smyczki",wood:"dęte drewniane",brass:"dęte blaszane, perkusja, kotły i harfa"};
+const FAM_LEADERS={perc:"Liderzy dętych drewnianych i blaszanych",harp:"Liderzy dętych drewnianych, blaszanych i kotłów",str:"Liderzy grup smyczkowych",wood:"Liderzy dętych drewnianych",brass:"Liderzy dętych blaszanych, kotłów i harfy"};
+
+/* Skład orkiestry: role w kolejności miejsc (liderzy najbliżej dyrygenta / środka). n = liczba domyślna */
+const SECTIONS=[
+ {id:"vn1",name:"I skrzypce",fam:"str",roles:[{c:"K",r:"Koncertmistrz",f:"Koncertmistrz",n:3,lead:1,cm:1},{c:"ZK",r:"Zastępca koncertmistrza",f:"Zastępca koncertmistrza",n:2},{c:"#",r:"I skrzypce",f:"I skrzypce – tutti",n:14}]},
+ {id:"vn2",name:"II skrzypce",fam:"str",roles:[{c:"Pr",r:"Prowadzący II skrzypiec",f:"II skrzypce – lider (prowadzący)",n:2,lead:1},{c:"#",r:"II skrzypce",f:"II skrzypce – tutti",n:12}]},
+ {id:"vla",name:"Altówki",fam:"str",roles:[{c:"Pr",r:"Prowadzący altówek",f:"Altówka – lider (prowadzący)",n:2,lead:1},{c:"#",r:"Altówka",f:"Altówka – tutti",n:12}]},
+ {id:"vc",name:"Wiolonczele",fam:"str",roles:[{c:"Pr",r:"Prowadzący wiolonczel",f:"Wiolonczela – lider (prowadzący)",n:2,lead:1},{c:"ZPr",r:"Zastępca prowadzącego wiolonczel",f:"Wiolonczela – zastępca prowadzącego",n:1},{c:"#",r:"Wiolonczela",f:"Wiolonczela – tutti",n:9}]},
+ {id:"cb",name:"Kontrabasy",fam:"str",roles:[{c:"Pr",r:"Prowadzący kontrabasów",f:"Kontrabas – lider (prowadzący)",n:2,lead:1},{c:"#",r:"Kontrabas",f:"Kontrabas – tutti",n:6}]},
+ {id:"fl",name:"Flety",fam:"wood",roles:[{c:"I",r:"I flet",f:"Flet – lider (I flet)",n:2,lead:1},{c:"II",r:"II flet",f:"II flet",n:1},{c:"Picc",r:"Flet piccolo",f:"Flet piccolo",n:1}]},
+ {id:"ob",name:"Oboje",fam:"wood",roles:[{c:"I",r:"I obój",f:"Obój – lider (I obój)",n:2,lead:1},{c:"II",r:"II obój",f:"II obój",n:1},{c:"Ra",r:"Rożek angielski",f:"Rożek angielski",n:1}]},
+ {id:"cl",name:"Klarnety",fam:"wood",roles:[{c:"I",r:"I klarnet",f:"Klarnet – lider (I klarnet)",n:2,lead:1},{c:"II/Es",r:"II klarnet / klarnet Es",f:"II klarnet ze zmianą na klarnet Es",n:1},{c:"II/Kb",r:"II klarnet / klarnet basowy",f:"II klarnet ze zmianą na klarnet basowy",n:1}]},
+ {id:"fg",name:"Fagoty",fam:"wood",roles:[{c:"I",r:"I fagot",f:"Fagot – lider (I fagot)",n:2,lead:1},{c:"II/Kf",r:"II fagot / kontrafagot",f:"II fagot ze zmianą na kontrafagot",n:1},{c:"Kf/II",r:"Kontrafagot / II fagot",f:"Kontrafagot ze zmianą na II fagot",n:1}]},
+ {id:"hn",name:"Waltornie",fam:"brass",roles:[{c:"I",r:"I waltornia",f:"Waltornia – lider (I waltornia)",n:3,lead:1},{c:"III",r:"III waltornia",f:"III waltornia",n:2},{c:"II/IV",r:"II/IV waltornia",f:"II/IV waltornia",n:2}]},
+ {id:"tp",name:"Trąbki",fam:"brass",roles:[{c:"I",r:"I trąbka",f:"Trąbka – lider (I trąbka)",n:2,lead:1},{c:"II",r:"II trąbka",f:"II trąbka",n:3}]},
+ {id:"tb",name:"Puzony",fam:"brass",roles:[{c:"I",r:"I puzon",f:"Puzon – lider (I puzon)",n:2,lead:1},{c:"II",r:"II puzon",f:"II puzon",n:1},{c:"Pzb",r:"Puzon basowy",f:"Puzon basowy",n:1}]},
+ {id:"tu",name:"Tuba",fam:"brass",roles:[{c:"Tb",r:"Tuba",f:"Tuba – lider",n:1,lead:1}]},
+ {id:"hp",name:"Harfa",fam:"brass",roles:[{c:"Hf",r:"Harfa",f:"Harfa – lider",n:1,lead:1}]},
+ {id:"perc",name:"Perkusja",fam:"brass",roles:[{c:"#",r:"Perkusja",f:"Perkusja",n:5}]},
+ {id:"timp",name:"Kotły",fam:"brass",roles:[{c:"Kt",r:"Kotły",f:"Kotły – lider",n:2,lead:1}]}
+];
+const SEC=Object.fromEntries(SECTIONS.map(s=>[s.id,s]));
+const RADA_SLOTS=[
+ {k:"cm",label:"Pierwszy koncertmistrz",ok:s=>!!s.cm},
+ {k:"str",label:"Smyczki",ok:s=>["vn1","vn2","vla","vc","cb"].includes(s.sec)},
+ {k:"wood",label:"Dęte drewniane",ok:s=>["fl","ob","cl","fg"].includes(s.sec)},
+ {k:"brass",label:"Dęte blaszane",ok:s=>["hn","tp","tb","tu"].includes(s.sec)},
+ {k:"perc",label:"Perkusja",ok:s=>["perc","timp"].includes(s.sec)},
+ {k:"insp",label:"Inspektor orkiestry",ok:()=>true}
+];
+/* id miejsca = sekcja-indeksRoli-numer, np. vla-1-3 = Altówka (3) */
+const DEF_RADA={cm:"vn1-0-1",str:"vla-1-1",wood:"fg-0-2",brass:"hn-0-2",perc:"perc-0-1",insp:"cb-1-1"};
+const defCounts=()=>Object.fromEntries(SECTIONS.map(s=>[s.id,s.roles.map(r=>r.n)]));
+const defaults=()=>({counts:defCounts(),rada:{...DEF_RADA}});
+const STORE_KEY="nfm-komisje-v3";
+const PUB=window.__NFM_PUBLIC__||null;
+let cfg=PUB?sane(PUB.cfg):load();
+function sane(v){const d=defaults();if(!v||typeof v!=="object")return d;
+  const c=d.counts;if(v.counts)for(const k in c){const a=v.counts[k];if(Array.isArray(a)&&a.length===c[k].length)c[k]=a.map(x=>Math.max(0,Math.min(40,parseInt(x)||0)));}
+  const r=Object.assign({},d.rada,v.rada||{});return {counts:c,rada:r};}
+function load(){try{return sane(JSON.parse(localStorage.getItem(STORE_KEY)||"null"));}catch(e){return defaults();}}
+/* Wspólny zapis składu (db): dokument orkiestra/sklad; brak dokumentu = skład domyślny */
+let sharedRef=null,sync="local",lastShared=null,syncMsg="",canEdit=true;
+function save(){
+  try{localStorage.setItem(STORE_KEY,JSON.stringify(cfg));}catch(e){}
+  if(sharedRef){const snap=JSON.parse(JSON.stringify(cfg));
+    sharedRef.set({counts:snap.counts,rada:snap.rada,updatedAt:Date.now()}).then(()=>{syncMsg="";},err=>{
+      syncMsg="Zmiana nie została zapisana we wspólnym składzie – nie masz uprawnień do edycji tej strony. Przywrócono wspólny skład.";
+      cfg=lastShared?sane(lastShared):defaults();
+      try{localStorage.setItem(STORE_KEY,JSON.stringify(cfg));}catch(e){}
+      rebuild();render();});}
+}
+function syncBadge(){if(sync==="shared"&&!canEdit)return `<div class="sync ro"><b>Tylko podgląd.</b> Widzisz aktualny wspólny skład orkiestry. Zmiany mogą wprowadzać wyłącznie osoby z uprawnieniami edycji.</div>`;return sync==="shared"?`<div class="sync ok">Wspólny skład – masz uprawnienia do edycji. Zmiany widzą od razu wszyscy użytkownicy narzędzia.</div>`:sync==="wait"?`<div class="sync">Łączenie ze wspólnym składem…</div>`:`<div class="sync bad">Wspólny skład jest teraz niedostępny – zmiany zapisują się tylko w tej przeglądarce.</div>`;}
+async function connectShared(){
+  sync="wait";
+  let db=null;try{db=window.claude&&window.claude.use?await window.claude.use("db"):null;}catch(e){db=null;}
+  if(!db){sync="local";if(mode==="edit")renderEdit();return;}
+  try{const u=await window.claude.use("user");if(u){canEdit=!!(await u.canEdit());}}catch(e){}
+  sharedRef=db.doc("orkiestra/sklad");
+  sharedRef.onSnapshot(snap=>{
+    sync="shared";
+    const v=snap.exists?sane(snap.data()):defaults();
+    lastShared=v;
+    if(JSON.stringify(v)!==JSON.stringify(cfg)){cfg=v;try{localStorage.setItem(STORE_KEY,JSON.stringify(cfg));}catch(e){}
+      rebuild();if(selected&&!byId[selected]){selected=null;added.clear();}if(editing&&!byId[editing])editing=null;}
+    render();
+  },err=>{sync="local";sharedRef=null;if(mode==="edit")renderEdit();});
+}
+
+/* Geometria sceny */
+const C={x:500,y:600};
+function polar(r,a){const t=a*Math.PI/180;return[C.x+r*Math.cos(t),C.y-r*Math.sin(t)];}
+function sector(n,from,to,radii,spacing=34,insetPx=17){
+  const pts=[],dir=to>from?1:-1;
+  for(const r of radii){if(pts.length>=n)break;const st=spacing/r*180/Math.PI;const inset=insetPx/r*180/Math.PI;const span=Math.abs(to-from)-2*inset;const cap=Math.floor(span/st)+1;const k=Math.min(cap,n-pts.length);
+    const off=inset+(span-(k-1)*st)/2;for(let i=0;i<k;i++)pts.push(polar(r,from+dir*(off+i*st)));}
+  return pts;
+}
+const RS=[110,160,210,260,310,360,410,460];
+/* Dla sekcji środkowych: najpierw próbuj zmieścić się w 4 rzędach, zagęszczając miejsca */
+function sectorFit(n,from,to,rows){for(let sp=34;sp>=29;sp--){const p=sector(n,from,to,RS.slice(0,rows),sp);if(p.length>=n)return p;}return sector(n,from,to,RS,29);}
+function wP(yTop,sArc,dir){const Rr=1000-yTop,an=sArc/Rr;return[500+dir*Rr*Math.sin(an),1000-Rr*Math.cos(an)];}
+function wArc(n,yTop,s0,dir){const a=[];for(let i=0;i<n;i++)a.push(wP(yTop,s0+36*i,dir));return a;}
+function layout(N){
+  const L={vn1:sector(N.vn1,180,136,RS),vn2:sectorFit(N.vn2,136,90,4),vla:sectorFit(N.vla,44,90,4),vc:sector(N.vc,0,44,RS),cb:sector(N.cb,0,50,[320,365,410,455]),
+    fl:wArc(N.fl,282,24,-1),ob:wArc(N.ob,282,24,1),cl:wArc(N.cl,234,24,-1),fg:wArc(N.fg,234,24,1),hn:wArc(N.hn,182,24,-1)};
+  const lab=[];const wl=(t,yTop,s,dir,dy,anc)=>{const q=wP(yTop,s,dir);lab.push([t,q[0],q[1]+dy,anc]);};
+  if(N.fl)wl("Flety",282,24+36*(N.fl-1)+30,-1,4,"end"); if(N.ob)wl("Oboje",282,24+36*(N.ob-1)+30,1,4,"start");
+  if(N.cl)wl("Klarnety",234,24+36*(N.cl-1)+30,-1,4,"end"); if(N.fg)wl("Fagoty",234,24+36*(N.fg-1)+30,1,4,"start");
+  if(N.hn)wl("Waltornie",182,24+18*(N.hn-1),-1,-24,"middle");
+  let s=24;
+  for(const[id,t]of[["tp","Trąbki"],["tb","Puzony"],["tu","Tuba"]]){L[id]=wArc(N[id],182,s,1);if(N[id]){wl(t,182,s+18*(N[id]-1),1,-24,"middle");s+=36*(N[id]-1)+52;}}
+  const nt=N.timp;L.timp=[];for(let i=0;i<nt;i++)L.timp.push(wP(126,(i-(nt-1)/2)*36,1));
+  if(nt)wl("Kotły",126,0,1,-24,"middle");
+  const ps=nt?(nt-1)/2*36+62:24;L.perc=wArc(N.perc,126,ps,1);if(N.perc)wl("Perkusja",126,ps+18*(N.perc-1),1,-24,"middle");
+  L.hp=[];for(let i=0;i<N.hp;i++)L.hp.push([236-36*i,372]);if(N.hp)lab.push(["Harfa",236-18*(N.hp-1),346,"middle"]);
+  const fixed=[["vn1","I skrzypce",...polar(372,168),"middle"],["vn2","II skrzypce",...polar(292,113),"middle"],["vla","Altówki",...polar(292,67),"middle"],["vc","Wiolonczele",705,438,"middle"],["cb","Kontrabasy",850,470,"start"]];
+  fixed.forEach(([id,t,x,y,a])=>{if(N[id])lab.push([t,x,y,a]);});
+  return {L,lab};
+}
+
+/* Budowa listy miejsc */
+let seats=[],byId={},LABELS=[];
+function buildSeats(){
+  seats=[];byId={};const N={};
+  SECTIONS.forEach(sec=>{N[sec.id]=cfg.counts[sec.id].reduce((a,b)=>a+b,0);});
+  const {L,lab}=layout(N);LABELS=lab;
+  SECTIONS.forEach(sec=>{let i=0;const pos=L[sec.id];
+    sec.roles.forEach((ro,ri)=>{const n=cfg.counts[sec.id][ri];for(let k=1;k<=n;k++){const id=`${sec.id}-${ri}-${k}`;
+      const s={id,sec:sec.id,secName:sec.name,code:ro.c==="#"?String(k):ro.c,role:ro.r,full:ro.f,n,num:n>1?k:0,lead:!!ro.lead,cm:!!ro.cm,x:pos[i][0],y:pos[i][1]};
+      seats.push(s);byId[id]=s;i++;}});});
+  for(const k in cfg.rada)if(cfg.rada[k]&&!byId[cfg.rada[k]])cfg.rada[k]="";
+}
+const OFF=[{id:"mgr",role:"Manager orkiestry"}];
+const famOf=secId=>SEC[secId].fam;
+const radaSlotOf=id=>{for(const k in cfg.rada)if(cfg.rada[k]===id)return k;return null;};
+const roleLabel=s=>s.role+(s.num?` (${s.num})`:"");
+const whoFull=s=>`${roleLabel(s)} – ${s.secName}`;
+
+/* Rysowanie */
+const svg=document.getElementById("stage");
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const a in attrs)e.setAttribute(a,attrs[a]);if(parent)parent.appendChild(e);return e;}
+function drawStage(){
+  svg.innerHTML="";
+  el("path",{class:"stage-floor",d:"M40,622 L40,300 Q40,40 500,40 Q960,40 960,300 L960,622 Z"},svg);
+  el("path",{class:"riser",d:"M300,329 A700,700 0 0 1 700,329"},svg);
+  el("path",{class:"riser",d:"M140,294 A792,792 0 0 1 860,294"},svg);
+  LABELS.forEach(([t,x,y,anc])=>{const e=el("text",{class:"lbl",x,y,"text-anchor":anc},svg);e.textContent=t;});
+  const pg=el("g",{class:"podium-g",tabindex:"0",role:"button","aria-label":"Dyrygent – wyczyść wybór stanowiska"},svg);
+  el("circle",{class:"podium",cx:C.x,cy:C.y,r:24},pg);
+  const pt=el("text",{class:"podium-t",x:C.x,y:C.y},pg);pt.textContent="Dyrygent";
+  el("title",{},pg).textContent="Kliknij, aby wyczyścić mapę";
+  const clear=()=>{hideTip();selected=null;editing=null;added.clear();render();};
+  pg.addEventListener("click",clear);
+  pg.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();clear();}});
+  seats.forEach(s=>{
+    const g=el("g",{class:"seat"+(s.lead?" lead":""),tabindex:"0",role:"button","data-id":s.id,transform:`translate(${s.x.toFixed(1)},${s.y.toFixed(1)})`},svg);
+    el("circle",{class:"hit",r:17},g);
+    el("circle",{class:"ring",r:16},g);
+    el("circle",{class:"body",r:15},g);
+    const t=el("text",{x:0,y:0.5},g);t.textContent=s.code;if(s.code.length>3)t.style.fontSize="7px";
+    el("path",{class:"star",d:"M0,-6.5 L1.9,-2 6.5,-2 2.8,0.9 4.2,5.6 0,2.9 -4.2,5.6 -2.8,0.9 -6.5,-2 -1.9,-2Z",transform:"translate(12,-12)",style:"display:none"},g);
+    g.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")showTip(s,e.clientX,e.clientY);});
+    g.addEventListener("pointermove",e=>{if(e.pointerType==="mouse")showTip(s,e.clientX,e.clientY);});
+    g.addEventListener("pointerleave",hideTip);
+    g.addEventListener("focus",()=>{let kb=false;try{kb=g.matches(":focus-visible");}catch(e){}if(!kb)return;const b=g.getBoundingClientRect();showTip(s,b.right,b.bottom);});
+    g.addEventListener("blur",hideTip);
+    s.g=g;
+    g.addEventListener("click",()=>pick(s.id));
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(s.id);}});
+  });
+}
+
+/* Stan */
+let mode="audit", selected=null, editing=null;
+const added=new Set();
+
+function compute(selId){
+  const sel=byId[selId],fam=sel.sec==="hp"?"harp":(sel.sec==="perc"||sel.sec==="timp")?"perc":famOf(sel.sec),cmEx=sel.cm,st={};
+  const radaIds=new Set(Object.values(cfg.rada).filter(Boolean));
+  seats.forEach(s=>{let v;
+    if(s.id===selId)v=fam==="harp"?"selm":"sel";
+    else if(s.sec===sel.sec||(fam==="perc"&&(s.sec==="perc"||s.sec==="timp")))v="sec";
+    else if(radaIds.has(s.id))v="rada";
+    else if(s.lead&&(fam==="perc"?["fl","ob","cl","fg","hn","tp","tb","tu"].includes(s.sec):fam==="harp"?["wood","brass"].includes(famOf(s.sec)):famOf(s.sec)===fam))v="fam";
+    else if(added.has(s.id))v="addm";
+    else if(cmEx)v="all";
+    else if(s.lead)v="opt";
+    else v="none";
+    st[s.id]=v;});
+  return {sel,fam,cmEx,st};
+}
+const ST_TXT={sel:"przesłuchiwane stanowisko",selm:"przesłuchiwane stanowisko · harfa w komisji obowiązkowej",sec:"komisja obowiązkowa (sekcja)",rada:"komisja obowiązkowa (Rada Artystyczna)",fam:"komisja obowiązkowa (lider grupy)",addm:"komisja obowiązkowa (dodany do nieparzystego składu)",opt:"głos dodatkowy, nieobowiązkowy",all:"głos dodatkowy (wyjątek: koncertmistrz)",none:"bez głosu"};
+
+function paint(res){
+  seats.forEach(s=>{
+    const g=s.g;g.setAttribute("class","seat"+(s.lead?" lead":""));
+    if(mode==="audit"&&res)g.classList.add("st-"+res.st[s.id]);
+    if(mode==="edit"&&editing===s.id)g.classList.add("editing");
+    const slot=radaSlotOf(s.id);
+    g.querySelector(".star").style.display=slot?"":"none";
+    const stTxt=res&&mode==="audit"?ST_TXT[res.st[s.id]]:"";
+    g.setAttribute("aria-label",`${s.full}${s.num?" ("+s.num+")":""} – ${s.secName}${slot?" · Rada Artystyczna":""}${stTxt?" · "+stTxt:""}`);
+    s.stTxt=stTxt;s.slot=slot;
+  });
+  const off=document.getElementById("offstage");
+  const cls=res&&mode==="audit"?"st-rada":"";
+  off.innerHTML=`<span class="cap">Poza sceną (Rada Artystyczna):</span>`+OFF.map(o=>`<span class="chip ${cls}"><i></i>${esc(o.role)}</span>`).join("");
+}
+
+const tip=document.getElementById("tip");
+function showTip(s,x,y){
+  tip.innerHTML=`<b>${esc(s.full)}</b><span>${esc(s.secName)}${s.n>1?` · stanowisko ${s.num} z ${s.n}`:""}</span>${s.slot?`<span>★ Rada Artystyczna${s.slot==="insp"?" – inspektor orkiestry":""}</span>`:""}${s.stTxt?`<span class="st">${esc(s.stTxt.charAt(0).toUpperCase()+s.stTxt.slice(1))}</span>`:""}`;
+  tip.hidden=false;const w=tip.offsetWidth,h=tip.offsetHeight;
+  let L=x+14,T=y+14;if(L+w>innerWidth-8)L=x-w-14;if(T+h>innerHeight-8)T=y-h-14;
+  tip.style.left=Math.max(8,L)+"px";tip.style.top=Math.max(8,T)+"px";
+}
+function hideTip(){tip.hidden=true;}
+function esc(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+function group(list){const m=new Map();list.forEach(s=>{if(!m.has(s.secName))m.set(s.secName,[]);m.get(s.secName).push(s);});return m;}
+function plist(list,showSec,addable){if(!list.length)return `<p class="empty" style="margin:6px 0">Brak osób.</p>`;
+  const li=s=>`<li><span>${esc(roleLabel(s))}</span>${addable?`<button type="button" class="mini" data-add="${s.id}">${added.has(s.id)?"Usuń z komisji":"Dodaj do komisji"}</button>`:""}</li>`;
+  if(!showSec)return `<ul class="plist">${list.map(li).join("")}</ul>`;
+  let h="";group(list).forEach((arr,name)=>{h+=`<div class="subhead">${esc(name)}</div><ul class="plist">${arr.map(li).join("")}</ul>`;});return h;}
+
+function render(){if(mode==="audit")renderAudit();else renderEdit();}
+
+function renderAudit(){
+  const p=document.getElementById("panel");p.classList.remove("ro-mode");
+  if(!selected){setBar(null);paint(null);p.innerHTML=`<div class="eyebrow">Przesłuchanie</div><div class="target">Wybierz stanowisko</div><p class="hint" style="font-size:14px;margin-top:8px">Kliknij miejsce na mapie orkiestry, na które odbywa się przesłuchanie. Mapa pokoloruje skład komisji obowiązkowej i osoby z głosem dodatkowym, a tutaj pojawi się pełna lista.</p><p class="hint" style="font-size:14px">Kliknięcie <b>Dyrygenta</b> czyści wybór i przywraca mapę bez kolorów.</p>`;return;}
+  const res=compute(selected);paint(res);
+  const {sel,fam,cmEx,st}=res;
+  const of=v=>seats.filter(s=>st[s.id]===v);
+  const secL=seats.filter(s=>st[s.id]==="sec"||st[s.id]==="selm"),famL=of("fam"),optL=of("opt"),allL=of("all"),radaSeatL=of("rada"),addL=of("addm");
+  const extraL=cmEx?allL:optL;
+  const warns=[];
+  const radaRows=RADA_SLOTS.map(sl=>{const id=cfg.rada[sl.k];const s=id&&byId[id];
+    if(!s){warns.push(`Nie wyznaczono członka Rady Artystycznej: ${sl.label.toLowerCase()}. Ustaw go w trybie „Skład orkiestry”.`);return `<li><span>${sl.label}</span><span class="note">nie wyznaczono</span></li>`;}
+    let note="";if(st[id]==="sec")note=" · już w sekcji";
+    if(st[id]==="sel"){note=" · stanowisko przesłuchiwane";warns.push(`Członek Rady Artystycznej (${sl.label.toLowerCase()}) zajmuje przesłuchiwane stanowisko. Jeśli to wakat, wyznacz zastępcę w trybie „Skład orkiestry”.`);}
+    return `<li><span>${sl.label}</span><span>${esc(roleLabel(s))}${s.sec!==sel.sec||st[id]==="sel"?" – "+esc(s.secName):""}${note}</span></li>`;}).join("")
+    +OFF.map(o=>`<li><span>Manager orkiestry</span><span>administracja</span></li>`).join("");
+  const radaCount=radaSeatL.length+OFF.length;
+  const base=secL.length+radaCount+famL.length;
+  const mandatory=base+addL.length;
+  const odd=mandatory%2===1;
+  const extra=extraL.length;
+  const total=mandatory+extra;
+  setBar(`<div class="t"><b>${esc(roleLabel(sel))}</b>Komisja ${mandatory} ${odd?"✓":'<span class="bad">✕ parzysta</span>'} · dodatkowe ${extra}</div><button type="button" id="mbarBtn">Skład komisji ↓</button>`);
+  p.innerHTML=`
+   <div class="eyebrow">Przesłuchanie na stanowisko</div>
+   <div class="target">${esc(roleLabel(sel))}</div>
+   <div class="fam-tag">Grupa: ${esc(sel.secName)} · Rodzina: ${esc(FAM_NAMES[fam])}</div>
+   <div class="tally">
+     <div class="m"><div class="n">${mandatory}</div><div class="t">komisja obowiązkowa</div><div class="par ${odd?"ok":"bad"}">${odd?"✓ nieparzysta":"✕ parzysta"}</div></div>
+     <div class="o"><div class="n">${extra}</div><div class="t">${cmEx?"pozostali członkowie orkiestry":"głosy dodatkowe (opcjonalne)"}</div></div>
+     <div><div class="n">${total}</div><div class="t">maks. liczba głosujących</div></div>
+   </div>
+   ${odd?"":`<div class="warn parity"><b>Komisja obowiązkowa liczy ${mandatory} osób – to liczba parzysta.</b> Należy dodać jedną osobę z prawem głosu, aby skład był nieparzysty. Wybierz ją z listy „${cmEx?"Pozostali członkowie orkiestry":"Głos dodatkowy"}” poniżej przyciskiem „Dodaj do komisji”.</div>`}
+   ${fam==="perc"?`<div class="exc" style="border-color:var(--mand);background:color-mix(in srgb,var(--mand) 10%,transparent)"><b>Wyjątek – perkusja i kotły.</b> Komisję obowiązkową tworzą: kotły, cała perkusja, Rada Artystyczna oraz wszyscy liderzy dętych drewnianych i blaszanych. Pozostali liderzy mają głos dodatkowy.</div>`:""}
+   ${fam==="harp"?`<div class="exc" style="border-color:var(--mand);background:color-mix(in srgb,var(--mand) 10%,transparent)"><b>Wyjątek – harfa.</b> Komisję obowiązkową tworzą: harfa, Rada Artystyczna oraz liderzy dętych drewnianych, dętych blaszanych i kotłów.</div>`:""}
+   ${cmEx?`<div class="exc"><b>Wyjątek – koncertmistrz.</b> Głosuje każdy członek orkiestry, każdy ma jeden pełny głos. Komisja obowiązkowa jest zachowana i zaznaczona osobno.</div>`:""}
+   ${warns.map(w=>`<div class="warn">${esc(w)}</div>`).join("")}
+   <details open><summary><span class="dot" style="background:var(--mand)"></span>Sekcja: ${fam==="perc"?"Perkusja i kotły":esc(sel.secName)} <span class="cnt">${secL.length}</span></summary>${plist(secL,false)}</details>
+   <details open><summary><span class="dot" style="background:var(--mand)"></span>Rada Artystyczna <span class="cnt">${radaCount} + w sekcji ${RADA_SLOTS.filter(sl=>st[cfg.rada[sl.k]]==="sec").length}</span></summary><ul class="radalist">${radaRows}</ul></details>
+   <details open><summary><span class="dot" style="background:var(--mand)"></span>${FAM_LEADERS[fam]} <span class="cnt">${famL.length}</span></summary>${plist(famL,true)}</details>
+   ${addL.length?`<details open><summary><span class="dot" style="background:var(--mand)"></span>Dodani do komisji (nieparzysty skład) <span class="cnt">${addL.length}</span></summary>${plist(addL,true,true)}</details>`:""}
+   <details ${odd?"":"open"}><summary><span class="dot" style="background:var(--add)"></span>${cmEx?"Pozostali członkowie orkiestry":"Głos dodatkowy – liderzy innych grup"} <span class="cnt">${extra}</span></summary>${cmEx?"":`<p class="hint">Udział nieobowiązkowy. Jeśli lider przyjdzie, ma prawo głosu.</p>`}${plist(extraL,true,true)}</details>
+   <div class="row"><button class="btn primary" type="button" id="copyBtn">Kopiuj skład komisji</button></div>
+   <div class="toast" id="toast"></div>
+   <textarea id="copyFallback" hidden readonly aria-label="Skład komisji do skopiowania"></textarea>`;
+  p.querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>{const id=b.dataset.add;if(added.has(id))added.delete(id);else added.add(id);renderAudit();});
+  document.getElementById("copyBtn").onclick=()=>copyText(buildText(res,{secL,famL,addL,extraL,mandatory,extra,total,odd}));
+}
+
+function buildText(res,d){
+  const {sel,fam,cmEx,st}=res;const L=[];
+  L.push(`SKŁAD KOMISJI – przesłuchanie na stanowisko: ${roleLabel(sel)} (${sel.secName})`);
+  L.push(`Komisja obowiązkowa: ${d.mandatory} os. (${d.odd?"nieparzysta":"PARZYSTA – należy dodać osobę"}) | ${cmEx?"pozostali członkowie orkiestry":"głosy dodatkowe"}: ${d.extra} | maks. głosujących: ${d.total}`);
+  if(cmEx)L.push("Wyjątek: przesłuchanie na koncertmistrza – głosuje każdy członek orkiestry (1 pełny głos).");
+  if(fam==="perc")L.push("Wyjątek: perkusja i kotły – komisja: kotły, cała perkusja, Rada Artystyczna, wszyscy liderzy dętych drewnianych i blaszanych.");
+  if(fam==="harp")L.push("Wyjątek: harfa – komisja: harfa, Rada Artystyczna, liderzy dętych drewnianych, blaszanych i kotłów.");
+  L.push("",`1. Sekcja (${fam==="perc"?"Perkusja i kotły":sel.secName}):`);d.secL.forEach(s=>L.push("   - "+roleLabel(s)));
+  L.push("","2. Rada Artystyczna:");
+  RADA_SLOTS.forEach(sl=>{const s=byId[cfg.rada[sl.k]];L.push(`   - ${sl.label}: ${s?whoFull(s):"nie wyznaczono"}${s&&st[s.id]==="sec"?" [w sekcji]":""}${s&&st[s.id]==="sel"?" [przesłuchiwane stanowisko]":""}`);});
+  L.push("   - Manager orkiestry");
+  L.push("",`3. ${FAM_LEADERS[fam]}:`);d.famL.forEach(s=>L.push("   - "+whoFull(s)));
+  let n=4;
+  if(d.addL.length){L.push("",`${n++}. Dodani do komisji (nieparzysty skład):`);d.addL.forEach(s=>L.push("   - "+whoFull(s)));}
+  L.push("",`${n}. ${cmEx?"Pozostali członkowie orkiestry (głos)":"Głos dodatkowy (udział nieobowiązkowy) – liderzy innych grup"}:`);d.extraL.forEach(s=>L.push("   - "+whoFull(s)));
+  return L.join("\n");
+}
+function copyText(t){const toast=document.getElementById("toast");const fb=document.getElementById("copyFallback");
+  const done=()=>{toast.textContent="Skopiowano do schowka.";};
+  const fail=()=>{fb.hidden=false;fb.value=t;fb.focus();fb.select();toast.textContent="Zaznaczono tekst – skopiuj go skrótem Ctrl+C / Cmd+C.";};
+  try{navigator.clipboard.writeText(t).then(done,fail);}catch(e){fail();}}
+
+/* Tryb: Skład orkiestry */
+let resetArmed=false,editMsg="";
+function rebuild(){hideTip();buildSeats();drawStage();}
+function changeCount(secId,ri,delta){
+  if(!canEdit)return;
+  const arr=cfg.counts[secId];const total=arr.reduce((a,b)=>a+b,0);
+  if(delta<0&&(arr[ri]===0||total===1))return;
+  if(delta>0&&arr[ri]>=40)return;
+  editMsg="";
+  if(delta<0){const gone=`${secId}-${ri}-${arr[ri]}`;const slot=radaSlotOf(gone);
+    if(slot){editMsg=`Usunięte stanowisko należało do Rady Artystycznej (${RADA_SLOTS.find(r=>r.k===slot).label.toLowerCase()}). Kliknij na mapie nowego członka.`;}
+    if(editing===gone)editing=null;}
+  arr[ri]+=delta;save();selected=null;added.clear();rebuild();renderEdit();
+}
+function renderEdit(){
+  setBar(null);paint(null);
+  const p=document.getElementById("panel");p.classList.toggle("ro-mode",!canEdit);const s=editing&&byId[editing];
+  const total=seats.length;
+  let seatForm=`<p class="hint" style="font-size:13.5px">Kliknij miejsce na mapie, aby zmienić przypisanie do Rady Artystycznej.</p>`;
+  if(s){const slots=RADA_SLOTS.filter(sl=>sl.ok(s));const cur=radaSlotOf(s.id);
+    seatForm=`<div class="editbox"><div class="eyebrow">Wybrane miejsce</div><div class="target" style="font-size:18px">${esc(s.full)}${s.num?" ("+s.num+")":""}</div><div class="fam-tag">${esc(s.secName)}</div>
+    <div class="field"><label for="radaSel">Rada Artystyczna</label><select id="radaSel"><option value="">— nie jest członkiem —</option>${slots.map(sl=>{const holder=byId[cfg.rada[sl.k]];return `<option value="${sl.k}" ${cur===sl.k?"selected":""}>${sl.label}${holder&&holder.id!==s.id?" (zamiast: "+esc(roleLabel(holder))+" – "+esc(holder.secName)+")":""}</option>`;}).join("")}</select></div></div>`;}
+  const secRows=SECTIONS.map(sec=>{const arr=cfg.counts[sec.id];const sum=arr.reduce((a,b)=>a+b,0);
+    return `<details class="secedit"><summary>${esc(sec.name)} <span class="cnt">${sum}</span></summary><ul class="counts">${sec.roles.map((ro,ri)=>`<li><span>${esc(ro.r)}${ro.lead?' <em>lider</em>':""}</span><span class="stepper"><button type="button" class="mini" data-sec="${sec.id}" data-ri="${ri}" data-d="-1" aria-label="Usuń stanowisko: ${esc(ro.r)}" ${arr[ri]===0||sum===1?"disabled":""}>−</button><b>${arr[ri]}</b><button type="button" class="mini" data-sec="${sec.id}" data-ri="${ri}" data-d="1" aria-label="Dodaj stanowisko: ${esc(ro.r)}">+</button></span></li>`).join("")}</ul></details>`;}).join("");
+  p.innerHTML=`<h2>Skład orkiestry</h2>
+   ${syncBadge()}
+   ${syncMsg?`<div class="warn">${esc(syncMsg)}</div>`:""}
+   ${seatForm}
+   ${editMsg?`<div class="warn">${esc(editMsg)}</div>`:""}
+   <div class="field"><label>Rada Artystyczna</label><ul class="radalist">${RADA_SLOTS.map(sl=>{const h=byId[cfg.rada[sl.k]];return `<li><span>${sl.label}</span><span>${h?esc(roleLabel(h))+" – "+esc(h.secName):'<span class="note">nie wyznaczono</span>'}</span></li>`;}).join("")}<li><span>Manager orkiestry</span><span>administracja</span></li></ul></div>
+   <div class="field"><label>Stanowiska w sekcjach · razem ${total}</label><p class="hint" style="margin:0 0 4px">Przyciskami − / + zmieniasz liczbę stanowisk danego rodzaju. Mapa i komisje przeliczają się od razu. Usuwane jest zawsze ostatnie stanowisko danego rodzaju.</p>${secRows}</div>
+   ${canEdit&&!PUB?`<div class="pubbox"><div class="eyebrow">Wersja publiczna</div><p class="hint" style="margin:4px 0 8px">Plik HTML z aktualnym składem dla osób bez konta Claude: działa w każdej przeglądarce, na komputerze i telefonie, bez trybu edycji. Po każdej zmianie składu pobierz nowy plik index.html i wgraj go w miejsce poprzedniego na GitHub Pages – adres strony się nie zmienia.</p><button class="btn primary" type="button" id="pubBtn">Pobierz wersję publiczną</button></div>`:""}
+   <details><summary>Kopia zapasowa składu</summary>
+     <p class="hint">Skopiuj kod, aby zachować obecny skład. Wklejenie kodu i „Wczytaj” przywraca zapisany skład dla wszystkich.</p>
+     <div class="field"><label for="exportBox">Kod ustawień</label><textarea id="exportBox" readonly>${esc(JSON.stringify(cfg))}</textarea></div>
+     <div class="row" style="margin-top:4px"><button class="btn" type="button" id="expCopy">Kopiuj kod</button></div>
+     <div class="field"><label for="importBox">Wklej kod ustawień</label><textarea id="importBox"></textarea></div>
+     <div class="row" style="margin-top:4px"><button class="btn" type="button" id="impBtn">Wczytaj</button></div>
+   </details>
+   <div class="row"><button class="btn danger" type="button" id="resetBtn">${resetArmed?"Kliknij ponownie, aby potwierdzić":"Przywróć skład domyślny"}</button></div>
+   <div class="toast" id="toast"></div>
+   <textarea id="copyFallback" hidden readonly aria-label="Kod do skopiowania"></textarea>`;
+  const open=p.dataset.open?p.dataset.open.split(","):[];
+  p.querySelectorAll("details.secedit").forEach((d,i)=>{if(open.includes(SECTIONS[i].id))d.open=true;d.addEventListener("toggle",()=>{const o=[...p.querySelectorAll("details.secedit")].map((x,j)=>x.open?SECTIONS[j].id:null).filter(Boolean);p.dataset.open=o.join(",");});});
+  p.querySelectorAll("[data-sec]").forEach(b=>b.onclick=()=>changeCount(b.dataset.sec,+b.dataset.ri,+b.dataset.d));
+  const rs=document.getElementById("radaSel");
+  if(rs)rs.addEventListener("change",e=>{if(!canEdit)return;const cur=radaSlotOf(s.id);if(cur)cfg.rada[cur]="";if(e.target.value)cfg.rada[e.target.value]=s.id;editMsg="";save();renderEdit();});
+  const pb=document.getElementById("pubBtn");if(pb)pb.onclick=()=>window.__nfmExport(pb);
+  document.getElementById("expCopy").onclick=()=>copyText(JSON.stringify(cfg));
+  document.getElementById("impBtn").onclick=()=>{const t=document.getElementById("toast");try{const v=JSON.parse(document.getElementById("importBox").value);if(!v||typeof v!=="object"||!v.counts)throw 0;cfg=sane(v);save();editing=null;rebuild();renderEdit();document.getElementById("toast").textContent="Wczytano ustawienia.";}catch(e){t.style.color="var(--sel)";t.textContent="Nie udało się wczytać. Sprawdź, czy wklejony kod jest kompletny.";}};
+  document.getElementById("resetBtn").onclick=()=>{if(!resetArmed){resetArmed=true;renderEdit();return;}resetArmed=false;cfg=defaults();save();editing=null;editMsg="";rebuild();renderEdit();document.getElementById("toast").textContent="Przywrócono skład domyślny.";};
+}
+
+function pick(id){
+  if(mode==="audit"){if(selected!==id)added.clear();selected=id;renderAudit();}
+  else{editing=id;resetArmed=false;editMsg="";renderEdit();const rs=document.getElementById("radaSel");if(rs)rs.focus();}
+}
+function setMode(m){hideTip();mode=m;document.getElementById("modeAudit").setAttribute("aria-pressed",m==="audit");document.getElementById("modeEdit").setAttribute("aria-pressed",m==="edit");render();}
+document.getElementById("modeAudit").onclick=()=>setMode("audit");
+document.getElementById("modeEdit").onclick=()=>setMode("edit");
+
+if(PUB){document.getElementById("modeEdit").hidden=true;document.querySelector(".modes").hidden=true;
+  const sub=document.querySelector(".sub");sub.textContent+=` Skład orkiestry według stanu z dnia ${PUB.date}.`;}
+function setBar(html){const b=document.getElementById("mbar");if(!html){b.hidden=true;b.innerHTML="";return;}b.innerHTML=html;b.hidden=false;
+  document.getElementById("mbarBtn").onclick=()=>document.getElementById("panel").scrollIntoView({behavior:"smooth",block:"start"});}
+const NOJS_HTML=(()=>{const nj=document.getElementById("nojs");const h=nj?nj.outerHTML:"";if(nj)nj.remove();return h;})();
+document.getElementById("zoomBtn").onclick=e=>{const c=document.querySelector(".stage-card");const z=c.classList.toggle("zoomed");e.currentTarget.setAttribute("aria-pressed",z);e.currentTarget.textContent=z?"Dopasuj mapę do ekranu":"Powiększ mapę";};
+rebuild();
+render();
+if(!PUB)connectShared();
+
+/* Wersja publiczna: samodzielny plik HTML z wbudowanym aktualnym składem, bez trybu edycji */
+function buildPublicHTML(){
+  const style=[...document.querySelectorAll("style")].find(x=>x.textContent.includes("--mand"));
+  const main=[...document.querySelectorAll("script")].find(x=>x.textContent.includes("const SECTIONS=["));
+  const fonts=document.querySelector('link[href*="fonts.googleapis"]');
+  const wrap=document.querySelector(".wrap").cloneNode(true);
+  wrap.querySelector("#stage").innerHTML="";wrap.querySelector("#panel").innerHTML="";wrap.querySelector("#offstage").innerHTML="";
+  const md=wrap.querySelector(".modes");if(md)md.hidden=true;
+  const mb=wrap.querySelector("#mbar");if(mb){mb.innerHTML="";mb.hidden=true;}
+  const sc=wrap.querySelector(".stage-card");sc.classList.remove("zoomed");sc.insertAdjacentHTML("beforebegin",NOJS_HTML);
+  const zb=wrap.querySelector("#zoomBtn");zb.textContent="Powiększ mapę";zb.setAttribute("aria-pressed","false");
+  const t=wrap.querySelector("#tip");if(t){t.innerHTML="";t.hidden=true;}
+  const d=new Date(),date=`${String(d.getDate()).padStart(2,"0")}.${String(d.getMonth()+1).padStart(2,"0")}.${d.getFullYear()}`;
+  const data=JSON.stringify({cfg:{counts:cfg.counts,rada:cfg.rada},date}).replace(/</g,"\\u003c");
+  return {date,html:`<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Komisje przesłuchań NFM</title>${fonts?fonts.outerHTML:""}<style>body{margin:0}img{max-width:100%}</style><style>${style.textContent}</style></head><body>${wrap.outerHTML}<script>window.__NFM_PUBLIC__=${data};<\/script><script>${main.textContent}<\/script></body></html>`};
+}
+window.__nfmExport=async function(btn){
+  const msg=document.getElementById("toast");
+  let dl=null;try{dl=await window.claude.use("downloads");}catch(e){}
+  if(!dl){msg.style.color="var(--sel)";msg.textContent="Pobieranie pliku nie jest dostępne w tym widoku. Otwórz narzędzie w claude.ai w przeglądarce na komputerze.";return;}
+  const {date,html}=buildPublicHTML();
+  try{await dl.save({filename:"index.html",data:html});msg.style.color="";msg.textContent="Zapisano plik wersji publicznej.";}
+  catch(e){msg.style.color="var(--sel)";msg.textContent=e&&e.code==="declined"?"Pobieranie anulowane.":"Nie udało się zapisać pliku. Spróbuj ponownie za chwilę.";}
+};
+})();
+</script></body></html>
