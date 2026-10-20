@@ -8,16 +8,8 @@
   --f-display:"Bricolage Grotesque", "Archivo", system-ui, sans-serif;
   --f-body:"Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#12161d; --surface:#1a2029; --fg:#e7ebf1; --muted:#97a2b3; --line:#2c3441;
-  --stage:#2b261f; --stage-edge:#4a4033; --seat:#3a342b; --seat-stroke:#8a7a62; --seat-text:#efe6d6;
-  --mand:#0B5525; --add:#4CAF6A; --add-ink:#7CCB93; --add-text:#ffffff; --ring:#ffffff; --sel:#EF4651; --none:#353c48; --none-text:#8994a5;
-  --on-color:#ffffff; --accent:#5FD08A; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#12161d; --surface:#1a2029; --fg:#e7ebf1; --muted:#97a2b3; --line:#2c3441;
-  --stage:#2b261f; --stage-edge:#4a4033; --seat:#3a342b; --seat-stroke:#8a7a62; --seat-text:#efe6d6;
-  --mand:#0B5525; --add:#4CAF6A; --add-ink:#7CCB93; --add-text:#ffffff; --ring:#ffffff; --sel:#EF4651; --none:#353c48; --none-text:#8994a5;
-  --on-color:#ffffff; --accent:#5FD08A; color-scheme:dark}
+/* Jeden, jasny motyw na wszystkich urządzeniach (także przy trybie ciemnym w telefonie) */
+:root,:root[data-theme="dark"]{color-scheme:light}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14px;line-height:1.45}
 .wrap{max-width:1440px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
