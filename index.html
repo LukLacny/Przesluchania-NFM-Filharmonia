@@ -21,7 +21,7 @@ h1{font-family:var(--f-display);font-weight:700;font-size:clamp(22px,3vw,30px);m
 .modes button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
 .modes button:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .layout{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:16px;align-items:start}
-@media (max-width:980px){.layout{grid-template-columns:minmax(0,1fr)}.leftcol{display:contents}#nojs{order:0}.stage-card{order:1}.panel{order:2}.legend{order:3;margin-top:0}}
+@media (max-width:980px){.layout{grid-template-columns:minmax(0,1fr)}.leftcol{display:contents}#nojs{order:0}.stage-card{order:1}.sched{order:2;margin-top:0}.panel{order:3}.legend{order:4;margin-top:0}}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px}
 .stage-card{padding:12px;min-width:0}
 .stage-scroll{overflow-x:auto}
@@ -49,6 +49,9 @@ svg#stage{display:block;width:100%;min-width:720px;height:auto}
 .seat{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .seat .hit{fill:transparent}
 .seat circle.body{fill:var(--seat);stroke:var(--seat-stroke);stroke-width:1.2;transition:fill .15s}
+.seat text.ab-top{font-size:8.6px;font-weight:700}
+.seat text.ab-bot{font-size:6.4px;font-weight:500}
+.seat text.ab-one{font-size:7.6px;font-weight:700}
 .seat text{font:600 8.5px var(--f-body);fill:var(--seat-text);text-anchor:middle;dominant-baseline:central;pointer-events:none}
 .seat.lead circle.body{stroke-width:3}
 .seat:hover circle.body{stroke:var(--fg)}
@@ -68,7 +71,9 @@ svg#stage{display:block;width:100%;min-width:720px;height:auto}
 .seat.st-sel .ring,.seat.st-selm .ring{opacity:1;animation:pulse 1.6s ease-out infinite}
 @keyframes pulse{0%{r:16;opacity:.9}100%{r:26;opacity:0}}
 @media (prefers-reduced-motion:reduce){.seat.st-sel .ring,.seat.st-selm .ring{animation:none;opacity:.6}}
-.seat .star{fill:var(--fg);stroke:var(--surface);stroke-width:1.2}
+.seat .star rect{fill:#5d6878;stroke:#ffffff;stroke-width:1}
+.seat .star text{font:700 5.6px var(--f-body);fill:#ffffff;letter-spacing:.02em}
+.ratag{display:inline-flex;align-items:center;justify-content:center;width:22px;height:14px;border-radius:4px;background:#5d6878;color:#fff;font-size:8.5px;font-weight:700;letter-spacing:.02em;margin-top:3px}
 .seat.editing circle.body{stroke:var(--accent);stroke-width:4}
 .stage-floor{fill:var(--stage);stroke:var(--stage-edge);stroke-width:2}
 .riser{fill:none;stroke:var(--stage-edge);stroke-width:1;stroke-dasharray:4 4}
@@ -84,6 +89,63 @@ svg#stage{display:block;width:100%;min-width:720px;height:auto}
 .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px 4px 6px;font-size:13px;background:var(--surface)}
 .chip i{width:12px;height:12px;border-radius:50%;background:var(--none);display:inline-block}
 .chip.st-rada i{background:var(--mand)}
+/* Harmonogram */
+.sched{margin-top:16px;padding:16px}
+.sched h2{font-family:var(--f-display);font-size:17px;font-weight:700;margin:0 0 6px}
+.sched-form{display:grid;grid-template-columns:minmax(0,290px) minmax(0,1fr);gap:0 16px}
+.dp{position:relative}
+.dp-btn{font:inherit;width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-height:40px;cursor:pointer;font-weight:600}
+.dp-btn:hover{border-color:var(--mand)}
+.dp-btn[aria-expanded="true"]{border-color:var(--mand);box-shadow:0 0 0 3px color-mix(in srgb,var(--mand) 15%,transparent)}
+.dp-btn .ph{color:var(--muted);font-weight:500}
+.dp-btn svg{color:var(--mand);flex:none}
+.dp-pop{position:absolute;z-index:30;top:calc(100% + 6px);left:0;width:min(320px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(20,30,40,.18);padding:12px}
+.dp-head{display:flex;align-items:center;gap:4px;margin-bottom:8px}
+.dp-head .ttl{flex:1;text-align:center;font-family:var(--f-display);font-weight:700;font-size:15px;text-transform:capitalize}
+.dp-nav{font:inherit;border:0;background:transparent;color:var(--fg);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;line-height:1}
+.dp-nav:hover{background:var(--bg)}
+.dp-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;text-align:center}
+.dp-grid .wd{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:4px 0}
+.dp-grid .wd.we{color:color-mix(in srgb,var(--sel) 70%,var(--muted))}
+.dp-day{font:inherit;font-size:13.5px;border:0;background:transparent;color:var(--fg);height:36px;border-radius:8px;cursor:pointer;font-variant-numeric:tabular-nums}
+.dp-day:hover{background:color-mix(in srgb,var(--mand) 10%,transparent)}
+.dp-day.out{color:color-mix(in srgb,var(--muted) 55%,transparent)}
+.dp-day.we{color:color-mix(in srgb,var(--sel) 75%,var(--fg))}
+.dp-day.out.we{color:color-mix(in srgb,var(--sel) 35%,transparent)}
+.dp-day.today{box-shadow:inset 0 0 0 1.5px var(--mand);font-weight:700}
+.dp-day.on{background:var(--mand);color:#fff;font-weight:700}
+.dp-foot{display:flex;justify-content:space-between;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.dp-foot button{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;padding:6px 10px;cursor:pointer}
+.dp-foot button:hover{border-color:var(--fg)}
+.early{border:1.5px solid var(--mand);background:color-mix(in srgb,var(--mand) 6%,var(--surface));border-radius:12px;padding:12px 14px;margin:8px 0 12px}
+.early-head{font-weight:700;font-size:14.5px;margin-bottom:6px}
+.early-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:13.5px}
+.early-lbl{color:var(--muted)}
+.dp-sm{min-width:min(260px,100%)}
+.dp-sm .dp-btn{min-height:34px;padding:5px 10px;font-size:13.5px}
+.early-res{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;margin-top:10px;align-items:baseline}
+.early-res .k{font-size:13px;color:var(--muted)}
+.early-res .v{font-weight:700;font-size:15px;text-align:right;white-space:nowrap}
+.early-res .v.main{font-size:17px;color:var(--mand)}
+@media (max-width:520px){.early-res{grid-template-columns:minmax(0,1fr)}.early-res .v{text-align:left;margin-bottom:6px}}
+.earliest{font-size:13px;margin-top:8px;padding:8px 10px;border-radius:8px;background:color-mix(in srgb,var(--mand) 7%,transparent);border:1px solid color-mix(in srgb,var(--mand) 30%,transparent)}
+.earliest b{color:var(--mand)}
+@media (max-width:620px){.sched-form{grid-template-columns:minmax(0,1fr)}}
+.sched-form .field{margin:6px 0}
+.cat-line{font-size:13px;color:var(--muted);margin:4px 0 10px}
+.cat-line b{color:var(--fg)}
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.tl li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:10px 0 10px 18px;border-top:1px solid var(--line);position:relative;align-items:baseline}
+.tl li::before{content:"";position:absolute;left:0;top:15px;width:9px;height:9px;border-radius:50%;background:var(--mand)}
+.tl li.rec::before{background:var(--add)}
+.tl li.aud::before{background:var(--sel)}
+.tl .what{font-weight:600;font-size:14px}
+.tl .rule{display:block;font-weight:400;font-size:12.5px;color:var(--muted)}
+.tl .when{text-align:right;font-variant-numeric:tabular-nums}
+.tl .date{display:block;font-weight:700;font-size:15px;white-space:nowrap}
+.tl .rel{display:block;font-size:12px;color:var(--muted)}
+.tl .rel.late{color:var(--sel);font-weight:600}
+@media (max-width:520px){.tl li{grid-template-columns:minmax(0,1fr)}.tl .when{text-align:left}}
 /* Legenda */
 .legend{margin-top:16px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px}
 @media (max-width:760px){.legend{grid-template-columns:minmax(0,1fr)}}
@@ -189,6 +251,35 @@ textarea{min-height:90px;font-family:ui-monospace,Menlo,Consolas,monospace;font-
         <div class="offstage" id="offstage"></div>
       </section>
 
+      <section class="card sched" id="sched" aria-label="Harmonogram przesłuchania">
+        <h2>Harmonogram przesłuchania</h2>
+        <div class="sched-form">
+          <div class="field"><label for="audDateBtn">Proponowana data przesłuchania</label>
+            <div class="dp" id="dpAud"><input type="hidden" id="audDate" style="">
+              <button type="button" class="dp-btn" id="audDateBtn" aria-haspopup="dialog" aria-expanded="false"><span id="audDateTxt" class="ph">Wybierz datę</span><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"></rect><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
+              <div class="dp-pop" id="dpPop" role="dialog" aria-label="Wybierz datę przesłuchania" hidden=""></div>
+            </div></div>
+          <div class="field"><label for="audCat">Rodzaj stanowiska</label><select id="audCat">
+            <option value="auto">Według stanowiska wybranego na mapie</option>
+            <option value="first">Koncertmistrz lub pierwszy głos w dętych, kwintecie i perkusji, harfa</option>
+            <option value="winds">Instrumenty dęte (poza pierwszymi głosami), zastępcy koncertmistrza</option>
+            <option value="tutti">Muzyk tutti</option>
+          </select></div>
+        </div>
+        <div class="early" id="earlyBox">
+          <div class="early-head">Najwcześniejszy możliwy termin przesłuchania</div>
+          <div class="early-row"><span class="early-lbl">Gdyby ogłosić przesłuchanie w dniu:</span>
+            <div class="dp dp-sm" id="dpAnn"><input type="hidden" id="annDate" style="">
+              <button type="button" class="dp-btn" id="annDateBtn" aria-haspopup="dialog" aria-expanded="false" aria-label="Data ogłoszenia"><span id="annDateTxt" class="ph">dzisiaj</span><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"></rect><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
+              <div class="dp-pop" id="dpPopAnn" role="dialog" aria-label="Wybierz datę ogłoszenia" hidden=""></div>
+            </div></div>
+          <div id="earlyOut"><div class="early-res"><span class="k">Najwcześniejsza możliwa data przesłuchania (minimum 3 mies. od ogłoszenia)</span><span class="v main">środa, 31 marca 2027</span><span class="k">Data przy zalecanym wyprzedzeniu (4 mies.)</span><span class="v">piątek, 30 kwietnia 2027</span></div>
+      <div class="row" style="margin-top:8px"><button type="button" class="btn" id="useEarliest">Ustaw najwcześniejszą datę jako datę przesłuchania</button></div></div>
+        </div>
+        <div id="schedOut"><p class="cat-line">Terminy dla kategorii: <b>Muzyk tutti</b> – na podstawie stanowiska: Altówka (7) (Altówki)</p><ol class="tl"><li class="rec"><span class="what">Ogłoszenie przesłuchania – termin zalecany<span class="rule">Publikacja w internecie i na stronie orkiestry, 4 mies. przed przesłuchaniem</span></span><span class="when"><span class="date">poniedziałek, 30 listopada 2026</span><span class="rel ">za 6 dni</span></span></li><li class=""><span class="what">Ogłoszenie przesłuchania – najpóźniej<span class="rule">Publikacja w internecie i na stronie orkiestry, minimum 3 mies. przed przesłuchaniem</span></span><span class="when"><span class="date">czwartek, 31 grudnia 2026</span><span class="rel ">za 37 dni</span></span></li><li class=""><span class="what">Zamknięcie przyjmowania zgłoszeń<span class="rule">Najpóźniej 2 mies. przed przesłuchaniem</span></span><span class="when"><span class="date">niedziela, 31 stycznia 2027</span><span class="rel ">za 68 dni</span></span></li><li class=""><span class="what">Wybór kandydatów przez komisję<span class="rule">Komisja ma 1 tydzień od zamknięcia zgłoszeń</span></span><span class="when"><span class="date">niedziela, 7 lutego 2027</span><span class="rel ">za 75 dni</span></span></li><li class=""><span class="what">Wysłanie zaproszeń do kandydatów<span class="rule">Najpóźniej 5 tygodni przed przesłuchaniem</span></span><span class="when"><span class="date">środa, 24 lutego 2027</span><span class="rel ">za 92 dni</span></span></li><li class="aud"><span class="what">Przesłuchanie</span><span class="when"><span class="date">środa, 31 marca 2027</span><span class="rel ">za 127 dni</span></span></li></ol>
+   <div class="row" style="margin-top:10px"><button class="btn" type="button" id="schedCopy">Kopiuj harmonogram</button></div><div class="toast" id="schedToast"></div></div>
+      </section>
+
       <section class="card legend" aria-label="Legenda">
         <div>
           <h2>Legenda kolorów</h2>
@@ -201,7 +292,8 @@ textarea{min-height:90px;font-family:ui-monospace,Menlo,Consolas,monospace;font-
           <h3>Oznaczenia stałe</h3>
           <ul class="keys">
             <li><span class="sw lead"></span><div><b>Gruba obwódka</b><span class="d">Stanowisko lidera: koncertmistrz, prowadzący, I głos w dętych, tuba, harfa, kotły.</span></div></li>
-            <li><span class="sw star"><svg width="18" height="18" viewBox="-9 -9 18 18" aria-hidden="true"><path d="M0,-7 L2,-2.2 7,-2.2 3,1 4.5,6 0,3 -4.5,6 -3,1 -7,-2.2 -2,-2.2Z" fill="var(--fg)"></path></svg></span><div><b>Gwiazdka</b><span class="d">Członek Rady Artystycznej (manager orkiestry jest pod mapą, poza sceną).</span></div></li>
+            <li><span class="sw lead" style="border-width:1px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--seat-text)">Fl</span><div><b>Skróty włoskie na mapie</b><span class="d">Vl. I / Vl. II – skrzypce I / II (violino), Vla – altówka, Vc – wiolonczela, Cb – kontrabas, Fl – flet, Picc – flet piccolo (Picc / II fl – piccolo ze zmianą na II flet), Ob – obój, C.ingl – rożek angielski (corno inglese), Cl – klarnet (Es – klarnet Es, b – basowy), Fg – fagot, Cfg – kontrafagot, Cor – waltornia, Tr – trąbka, Trb – puzon (b – basowy), Tb – tuba, Arp – harfa, Timp – kotły, Perc – perkusja. Pod skrótem: głos (I, II, III, II/IV) albo funkcja: K – koncertmistrz, ZK – zastępca koncertmistrza, Pr – prowadzący, ZPr – zastępca prowadzącego, liczba – numer miejsca.</span></div></li>
+            <li><span class="ratag" aria-hidden="true">RA</span><div><b>Znacznik RA</b><span class="d">Członek Rady Artystycznej (manager orkiestry jest pod mapą, poza sceną).</span></div></li>
           </ul>
         </div>
         <div>
@@ -212,11 +304,15 @@ textarea{min-height:90px;font-family:ui-monospace,Menlo,Consolas,monospace;font-
               <div class="grp">smyczki → liderzy wszystkich grup smyczkowych (koncertmistrzowie i prowadzący I i II skrzypiec, altówek, wiolonczel, kontrabasów);<br>
               dęte drewniane → liderzy fletów, obojów, klarnetów, fagotów;<br>
               dęte blaszane, perkusja, kotły i harfa → liderzy waltorni, trąbek, puzonów, tuby, kotłów i harfy.</div></li>
-            <li><b>Rada Artystyczna</b> (gwiazdka): Koncertmistrz (1), Altówka (1) za smyczki, I fagot (2) za dęte drewniane, I waltornia (2) za dęte blaszane, Perkusja (1), Kontrabas (1) jako inspektor orkiestry oraz manager orkiestry (administracja, poza sceną). Zmiany wprowadza się w trybie „Skład orkiestry”: kliknij miejsce na mapie i wybierz funkcję w Radzie.</li>
+            <li><b>Rada Artystyczna</b> (znacznik RA): Koncertmistrz (1), Altówka (3) za smyczki, I fagot (2) za dęte drewniane, I waltornia (2) za dęte blaszane, Perkusja (1), Kontrabas (3) jako inspektor orkiestry oraz manager orkiestry (administracja, poza sceną). Zmiany wprowadza się w trybie „Skład orkiestry”: kliknij miejsce na mapie i wybierz funkcję w Radzie.</li>
             <li><b>Nieparzysty skład</b>: komisja obowiązkowa musi liczyć nieparzystą liczbę osób. Gdy wychodzi parzysta, narzędzie pokazuje ostrzeżenie i pozwala dodać jedną osobę z prawem głosu przyciskiem „Dodaj do komisji”. Dodana osoba liczy się do komisji obowiązkowej i jest oznaczona na niebiesko.</li>
             <li><b>Zmiana składu orkiestry</b>: w trybie „Skład orkiestry” można dodawać i usuwać stanowiska w każdej sekcji, np. po przesłuchaniach albo przy powiększeniu lub zmniejszeniu sekcji. Mapa i komisje przeliczają się od razu. Skład jest wspólny: zmianę widzą wszyscy użytkownicy na każdym urządzeniu, ale wprowadzać ją mogą tylko osoby z uprawnieniami edycji. Pozostali widzą ten tryb jako podgląd.</li>
             <li><b>Głos dodatkowy</b>: na każde przesłuchanie może przyjść lider z dowolnej grupy i głosować. Jego udział nie jest obowiązkowy.</li>
             <li><b>Wyjątek – koncertmistrz</b>: przy przesłuchaniu na stanowisko koncertmistrza głosuje każdy członek orkiestry, każdy ma jeden pełny głos.</li>
+            <li><b>Harmonogram</b>: pod mapą wpisz proponowaną datę przesłuchania, a narzędzie wyliczy terminy:
+              <div class="grp">koncertmistrz, pierwsze głosy w dętych, kwintecie i perkusji (kotły) oraz harfa → ogłoszenie najpóźniej 4 mies. przed (zalecane 6 mies.), zamknięcie zgłoszeń 2 mies. przed, wybór kandydatów do 2 tyg. po zamknięciu, zaproszenia najpóźniej 6 tyg. przed;<br>
+              dęte poza pierwszymi głosami oraz zastępcy koncertmistrza → ogłoszenie najpóźniej 3 mies. przed (zalecane 4 mies.), zamknięcie 2 mies. przed, wybór do 2 tyg. po zamknięciu, zaproszenia najpóźniej 5 tyg. przed;<br>
+              muzycy tutti → jak wyżej, ale komisja ma 1 tydzień na wybór kandydatów.</div></li>
             <li><b>Wyjątek – perkusja i kotły</b>: przy przesłuchaniu na kotły lub perkusję komisję obowiązkową tworzą: kotły, cała perkusja, Rada Artystyczna oraz wszyscy liderzy dętych drewnianych i blaszanych (fletów, obojów, klarnetów, fagotów, waltorni, trąbek, puzonów i tuby). Pozostali liderzy mają głos dodatkowy, nieobowiązkowy.</li>
             <li><b>Wyjątek – harfa</b>: harfa należy do grupy perkusji i kotłów i ma osobne stanowisko lidera. Przy przesłuchaniu na harfę komisję obowiązkową tworzą: harfa, Rada Artystyczna oraz liderzy dętych drewnianych, dętych blaszanych i kotłów (perkusja nie ma lidera). Na mapie harfa jest wtedy niebieska z czerwoną obwódką.</li>
           </ol>
@@ -225,10 +321,10 @@ textarea{min-height:90px;font-family:ui-monospace,Menlo,Consolas,monospace;font-
     </div>
 
     <aside class="card panel" id="panel" aria-live="polite"></aside>
-<div id="tip" role="tooltip" hidden=""></div>
+<div id="tip" role="tooltip" style="left: 606.32px; top: 534.91px;" hidden=""></div>
 <div id="mbar" hidden=""></div>
   </div>
-</div><script>window.__NFM_PUBLIC__={"cfg":{"counts":{"vn1":[3,2,14],"vn2":[2,12],"vla":[2,12],"vc":[2,1,9],"cb":[2,6],"fl":[2,1,1],"ob":[2,1,1],"cl":[2,1,1],"fg":[2,1,1],"hn":[3,2,2],"tp":[2,3],"tb":[2,1,1],"tu":[1],"hp":[1],"perc":[5],"timp":[2]},"rada":{"cm":"vn1-0-1","str":"vla-1-1","wood":"fg-0-2","brass":"hn-0-2","perc":"perc-0-1","insp":"cb-1-1"}},"date":"20.10.2026"};</script><script>
+</div><script>window.__NFM_PUBLIC__={"cfg":{"counts":{"vn1":[3,2,14],"vn2":[2,12],"vla":[2,12],"vc":[2,1,9],"cb":[2,6],"fl":[2,1,1],"ob":[2,1,1],"cl":[2,1,1],"fg":[2,1,1],"hn":[3,2,2],"tp":[2,3],"tb":[2,1,1],"tu":[1],"hp":[1],"perc":[4],"timp":[2]},"rada":{"cm":"vn1-0-1","str":"vla-1-1","wood":"fg-0-2","brass":"hn-0-2","perc":"perc-0-1","insp":"cb-1-1"}},"date":"24.11.2026"};</script><script>
 (function(){
 const NS="http://www.w3.org/2000/svg";
 const FAM_NAMES={perc:"perkusja i kotły (wyjątek)",harp:"harfa (wyjątek)",str:"smyczki",wood:"dęte drewniane",brass:"dęte blaszane, perkusja, kotły i harfa"};
@@ -250,7 +346,7 @@ const SECTIONS=[
  {id:"tb",name:"Puzony",fam:"brass",roles:[{c:"I",r:"I puzon",f:"Puzon – lider (I puzon)",n:2,lead:1},{c:"II",r:"II puzon",f:"II puzon",n:1},{c:"Pzb",r:"Puzon basowy",f:"Puzon basowy",n:1}]},
  {id:"tu",name:"Tuba",fam:"brass",roles:[{c:"Tb",r:"Tuba",f:"Tuba – lider",n:1,lead:1}]},
  {id:"hp",name:"Harfa",fam:"brass",roles:[{c:"Hf",r:"Harfa",f:"Harfa – lider",n:1,lead:1}]},
- {id:"perc",name:"Perkusja",fam:"brass",roles:[{c:"#",r:"Perkusja",f:"Perkusja",n:5}]},
+ {id:"perc",name:"Perkusja",fam:"brass",roles:[{c:"#",r:"Perkusja",f:"Perkusja",n:4}]},
  {id:"timp",name:"Kotły",fam:"brass",roles:[{c:"Kt",r:"Kotły",f:"Kotły – lider",n:2,lead:1}]}
 ];
 const SEC=Object.fromEntries(SECTIONS.map(s=>[s.id,s]));
@@ -333,6 +429,22 @@ function layout(N){
   return {L,lab};
 }
 
+/* Włoskie skróty na mapie: [skrót instrumentu, głos/funkcja]; "#" = numer miejsca */
+const ABBR={
+ "vn1:K":["Vl. I","K"],"vn1:ZK":["Vl. I","ZK"],"vn1:#":["Vl. I","#"],
+ "vn2:Pr":["Vl. II","Pr"],"vn2:#":["Vl. II","#"],
+ "vla:Pr":["Vla","Pr"],"vla:#":["Vla","#"],
+ "vc:Pr":["Vc","Pr"],"vc:ZPr":["Vc","ZPr"],"vc:#":["Vc","#"],
+ "cb:Pr":["Cb","Pr"],"cb:#":["Cb","#"],
+ "fl:I":["Fl","I"],"fl:II":["Fl","II"],"fl:Picc":["Picc","II fl"],
+ "ob:I":["Ob","I"],"ob:II":["Ob","II"],"ob:Ra":["C.ingl",""],
+ "cl:I":["Cl","I"],"cl:II/Es":["Cl","II/Es"],"cl:II/Kb":["Cl","II/b"],
+ "fg:I":["Fg","I"],"fg:II/Kf":["Fg","II/Cfg"],"fg:Kf/II":["Cfg","Fg II"],
+ "hn:I":["Cor","I"],"hn:III":["Cor","III"],"hn:II/IV":["Cor","II/IV"],
+ "tp:I":["Tr","I"],"tp:II":["Tr","II"],
+ "tb:I":["Trb","I"],"tb:II":["Trb","II"],"tb:Pzb":["Trb","b"],
+ "tu:Tb":["Tb",""],"hp:Hf":["Arp",""],"perc:#":["Perc","#"],"timp:Kt":["Timp",""]
+};
 /* Budowa listy miejsc */
 let seats=[],byId={},LABELS=[];
 function buildSeats(){
@@ -340,8 +452,9 @@ function buildSeats(){
   SECTIONS.forEach(sec=>{N[sec.id]=cfg.counts[sec.id].reduce((a,b)=>a+b,0);});
   const {L,lab}=layout(N);LABELS=lab;
   SECTIONS.forEach(sec=>{let i=0;const pos=L[sec.id];
-    sec.roles.forEach((ro,ri)=>{const n=cfg.counts[sec.id][ri];for(let k=1;k<=n;k++){const id=`${sec.id}-${ri}-${k}`;
-      const s={id,sec:sec.id,secName:sec.name,code:ro.c==="#"?String(k):ro.c,role:ro.r,full:ro.f,n,num:n>1?k:0,lead:!!ro.lead,cm:!!ro.cm,x:pos[i][0],y:pos[i][1]};
+    const secTot=cfg.counts[sec.id].reduce((a,b)=>a+b,0);let off=0;
+    sec.roles.forEach((ro,ri)=>{const n=cfg.counts[sec.id][ri];const contN=sec.fam==="str"&&ro.c==="#";const o=off;off+=n;for(let k=1;k<=n;k++){const id=`${sec.id}-${ri}-${k}`;const kk=contN?o+k:k;
+      const ab=ABBR[sec.id+":"+ro.c]||[ro.c,""];const s={id,sec:sec.id,secName:sec.name,rc:ro.c,top:ab[0],bot:ab[1]==="#"?String(kk):ab[1],code:ro.c==="#"?String(kk):ro.c,role:ro.r,full:ro.f,n,num:contN?kk:(n>1?k:0),posTot:contN?secTot:0,lead:!!ro.lead,cm:!!ro.cm,x:pos[i][0],y:pos[i][1]};
       seats.push(s);byId[id]=s;i++;}});});
   for(const k in cfg.rada)if(cfg.rada[k]&&!byId[cfg.rada[k]])cfg.rada[k]="";
 }
@@ -372,8 +485,9 @@ function drawStage(){
     el("circle",{class:"hit",r:17},g);
     el("circle",{class:"ring",r:16},g);
     el("circle",{class:"body",r:15},g);
-    const t=el("text",{x:0,y:0.5},g);t.textContent=s.code;if(s.code.length>3)t.style.fontSize="7px";
-    el("path",{class:"star",d:"M0,-6.5 L1.9,-2 6.5,-2 2.8,0.9 4.2,5.6 0,2.9 -4.2,5.6 -2.8,0.9 -6.5,-2 -1.9,-2Z",transform:"translate(12,-12)",style:"display:none"},g);
+    if(s.bot){const t1=el("text",{x:0,y:-3.2,class:"ab-top"},g);t1.textContent=s.top;const t2=el("text",{x:0,y:5.6,class:"ab-bot"},g);t2.textContent=s.bot;if(s.bot.length>4)t2.style.fontSize="5.6px";if(s.top.length>5)t1.style.fontSize="7.2px";else if(s.top.length>3)t1.style.fontSize="7.8px";}
+    else{const t=el("text",{x:0,y:0.5,class:"ab-one"},g);t.textContent=s.top;if(s.top.length>4)t.style.fontSize="6.6px";}
+    const ra=el("g",{class:"star",transform:"translate(11,-12)",style:"display:none"},g);el("rect",{x:-7,y:-4.5,width:14,height:9,rx:2.5},ra);const rt=el("text",{x:0,y:0.4},ra);rt.textContent="RA";
     g.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")showTip(s,e.clientX,e.clientY);});
     g.addEventListener("pointermove",e=>{if(e.pointerType==="mouse")showTip(s,e.clientX,e.clientY);});
     g.addEventListener("pointerleave",hideTip);
@@ -424,7 +538,7 @@ function paint(res){
 
 const tip=document.getElementById("tip");
 function showTip(s,x,y){
-  tip.innerHTML=`<b>${esc(s.full)}</b><span>${esc(s.secName)}${s.n>1?` · stanowisko ${s.num} z ${s.n}`:""}</span>${s.slot?`<span>★ Rada Artystyczna${s.slot==="insp"?" – inspektor orkiestry":""}</span>`:""}${s.stTxt?`<span class="st">${esc(s.stTxt.charAt(0).toUpperCase()+s.stTxt.slice(1))}</span>`:""}`;
+  tip.innerHTML=`<b>${esc(s.full)}</b><span>${esc(s.secName)}${s.posTot?` · miejsce ${s.num} z ${s.posTot}`:s.n>1?` · stanowisko ${s.num} z ${s.n}`:""}</span>${s.slot?`<span>Rada Artystyczna (RA)${s.slot==="insp"?" – inspektor orkiestry":""}</span>`:""}${s.stTxt?`<span class="st">${esc(s.stTxt.charAt(0).toUpperCase()+s.stTxt.slice(1))}</span>`:""}`;
   tip.hidden=false;const w=tip.offsetWidth,h=tip.offsetHeight;
   let L=x+14,T=y+14;if(L+w>innerWidth-8)L=x-w-14;if(T+h>innerHeight-8)T=y-h-14;
   tip.style.left=Math.max(8,L)+"px";tip.style.top=Math.max(8,T)+"px";
@@ -438,7 +552,7 @@ function plist(list,showSec,addable){if(!list.length)return `<p class="empty" st
   if(!showSec)return `<ul class="plist">${list.map(li).join("")}</ul>`;
   let h="";group(list).forEach((arr,name)=>{h+=`<div class="subhead">${esc(name)}</div><ul class="plist">${arr.map(li).join("")}</ul>`;});return h;}
 
-function render(){if(mode==="audit")renderAudit();else renderEdit();}
+function render(){if(mode==="audit")renderAudit();else renderEdit();renderSched();}
 
 function renderAudit(){
   const p=document.getElementById("panel");p.classList.remove("ro-mode");
@@ -466,6 +580,7 @@ function renderAudit(){
    <div class="eyebrow">Przesłuchanie na stanowisko</div>
    <div class="target">${esc(roleLabel(sel))}</div>
    <div class="fam-tag">Grupa: ${esc(sel.secName)} · Rodzina: ${esc(FAM_NAMES[fam])}</div>
+   ${(()=>{const c=CATS[catOfSeat(sel)];return `<div class="earliest">Przy ogłoszeniu dzisiaj przesłuchanie najwcześniej: <b>${fmtD(addMonthsFrom(today0(),c.annMin))}</b> (min. ${c.annMin} mies.; zalecane ${c.annRec} mies.: ${fmtD(addMonthsFrom(today0(),c.annRec))})</div>`;})()}
    <div class="tally">
      <div class="m"><div class="n">${mandatory}</div><div class="t">komisja obowiązkowa</div><div class="par ${odd?"ok":"bad"}">${odd?"✓ nieparzysta":"✕ parzysta"}</div></div>
      <div class="o"><div class="n">${extra}</div><div class="t">${cmEx?"pozostali członkowie orkiestry":"głosy dodatkowe (opcjonalne)"}</div></div>
@@ -502,7 +617,9 @@ function buildText(res,d){
   L.push("",`3. ${FAM_LEADERS[fam]}:`);d.famL.forEach(s=>L.push("   - "+whoFull(s)));
   let n=4;
   if(d.addL.length){L.push("",`${n++}. Dodani do komisji (nieparzysty skład):`);d.addL.forEach(s=>L.push("   - "+whoFull(s)));}
+  const sch=schedText();
   L.push("",`${n}. ${cmEx?"Pozostali członkowie orkiestry (głos)":"Głos dodatkowy (udział nieobowiązkowy) – liderzy innych grup"}:`);d.extraL.forEach(s=>L.push("   - "+whoFull(s)));
+  if(sch)L.push("",sch);
   return L.join("\n");
 }
 function copyText(t){const toast=document.getElementById("toast");const fb=document.getElementById("copyFallback");
@@ -564,7 +681,7 @@ function renderEdit(){
 }
 
 function pick(id){
-  if(mode==="audit"){if(selected!==id)added.clear();selected=id;renderAudit();}
+  if(mode==="audit"){if(selected!==id)added.clear();selected=id;renderAudit();renderSched();}
   else{editing=id;resetArmed=false;editMsg="";renderEdit();const rs=document.getElementById("radaSel");if(rs)rs.focus();}
 }
 function setMode(m){hideTip();mode=m;document.getElementById("modeAudit").setAttribute("aria-pressed",m==="audit");document.getElementById("modeEdit").setAttribute("aria-pressed",m==="edit");render();}
@@ -573,6 +690,101 @@ document.getElementById("modeEdit").onclick=()=>setMode("edit");
 
 if(PUB){document.getElementById("modeEdit").hidden=true;document.querySelector(".modes").hidden=true;
   const sub=document.querySelector(".sub");sub.textContent+=` Skład orkiestry według stanu z dnia ${PUB.date}.`;}
+/* Harmonogram przesłuchania */
+const CATS={
+  first:{label:"Koncertmistrz lub pierwszy głos w dętych, kwintecie i perkusji, harfa",annMin:4,annRec:6,closeM:2,selD:14,invW:6},
+  winds:{label:"Instrumenty dęte (poza pierwszymi głosami), zastępcy koncertmistrza",annMin:3,annRec:4,closeM:2,selD:14,invW:5},
+  tutti:{label:"Muzyk tutti",annMin:3,annRec:4,closeM:2,selD:7,invW:5}
+};
+const WIND_SECS=["fl","ob","cl","fg","hn","tp","tb","tu"];
+const catOfSeat=s=>s.lead?"first":(WIND_SECS.includes(s.sec)||(s.sec==="vn1"&&s.rc==="ZK"))?"winds":"tutti";
+const dfmt=new Intl.DateTimeFormat("pl-PL",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+const fmtD=d=>dfmt.format(d);
+function parseD(v){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||"");return m?new Date(+m[1],+m[2]-1,+m[3]):null;}
+function subMonths(d,n){const y=d.getFullYear(),m=d.getMonth()-n;const last=new Date(y,m+1,0).getDate();return new Date(y,m,Math.min(d.getDate(),last));}
+const addDays=(d,n)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);
+function today0(){const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate());}
+function relTxt(d){const n=Math.round((d-today0())/86400000);
+  if(n===0)return{t:"dzisiaj",late:false};if(n>0)return{t:n===1?"jutro":`za ${n} dni`,late:false};return{t:`termin minął ${-n} ${-n===1?"dzień":"dni"} temu`,late:true};}
+function schedule(){
+  const d=parseD(document.getElementById("audDate").value);
+  const sel=document.getElementById("audCat").value;
+  const seat=selected&&byId[selected];
+  const key=sel==="auto"?(seat?catOfSeat(seat):null):sel;
+  if(!d||!key)return {d,key,seat,sel};
+  const c=CATS[key];
+  const close=subMonths(d,c.closeM);
+  const rows=[
+    {cls:"rec",what:"Ogłoszenie przesłuchania – termin zalecany",rule:`Publikacja w internecie i na stronie orkiestry, ${c.annRec} mies. przed przesłuchaniem`,date:subMonths(d,c.annRec)},
+    {cls:"",what:"Ogłoszenie przesłuchania – najpóźniej",rule:`Publikacja w internecie i na stronie orkiestry, minimum ${c.annMin} mies. przed przesłuchaniem`,date:subMonths(d,c.annMin)},
+    {cls:"",what:"Zamknięcie przyjmowania zgłoszeń",rule:`Najpóźniej ${c.closeM} mies. przed przesłuchaniem`,date:close},
+    {cls:"",what:"Wybór kandydatów przez komisję",rule:`Komisja ma ${c.selD===7?"1 tydzień":"2 tygodnie"} od zamknięcia zgłoszeń`,date:addDays(close,c.selD)},
+    {cls:"",what:"Wysłanie zaproszeń do kandydatów",rule:`Najpóźniej ${c.invW} tygodni przed przesłuchaniem`,date:addDays(d,-7*c.invW)},
+    {cls:"aud",what:"Przesłuchanie",rule:"",date:d}
+  ];
+  return {d,key,seat,sel,c,rows};
+}
+function renderSched(){
+  const out=document.getElementById("schedOut");if(!out)return;
+  const r=schedule();
+  const eb=document.getElementById("earlyBox");eb.hidden=!r.key;
+  if(r.key){const c=CATS[r.key];const ann=parseD(document.getElementById("annDate").value)||today0();const isToday=+ann===+today0();
+    const e1=addMonthsFrom(ann,c.annMin),e2=addMonthsFrom(ann,c.annRec);
+    document.getElementById("earlyOut").innerHTML=`<div class="early-res"><span class="k">Najwcześniejsza możliwa data przesłuchania (minimum ${c.annMin} mies. od ogłoszenia)</span><span class="v main">${fmtD(e1)}</span><span class="k">Data przy zalecanym wyprzedzeniu (${c.annRec} mies.)</span><span class="v">${fmtD(e2)}</span></div>
+      <div class="row" style="margin-top:8px"><button type="button" class="btn" id="useEarliest">Ustaw najwcześniejszą datę jako datę przesłuchania</button></div>`;
+    document.getElementById("useEarliest").onclick=()=>setAudDate(e1);}
+  let catLine="";
+  if(r.key){const why=r.sel==="auto"&&r.seat?` – na podstawie stanowiska: ${esc(roleLabel(r.seat))} (${esc(r.seat.secName)})`:"";catLine=`<p class="cat-line">Terminy dla kategorii: <b>${esc(CATS[r.key].label)}</b>${why}</p>`;}
+  if(!r.key){out.innerHTML=`<p class="hint" style="font-size:13.5px">Wybierz stanowisko na mapie albo rodzaj stanowiska z listy, aby wyliczyć terminy.</p>`;return;}
+  if(!r.d){out.innerHTML=catLine+`<p class="hint" style="font-size:13.5px">Wpisz proponowaną datę przesłuchania, a narzędzie wyliczy terminy ogłoszenia, zamknięcia zgłoszeń, wyboru kandydatów i wysłania zaproszeń.</p>`;return;}
+  const lateAnn=r.rows[1].date<today0();
+  out.innerHTML=catLine+(lateAnn?`<div class="warn"><b>Na tę datę przesłuchania jest już za późno.</b> Ostatni termin ogłoszenia (${fmtD(r.rows[1].date)}) minął. Najwcześniejsza możliwa data przesłuchania przy ogłoszeniu dzisiaj to ${fmtD(addMonthsFrom(today0(),r.c.annMin))}.</div>`:"")+
+   `<ol class="tl">${r.rows.map(x=>{const rel=relTxt(x.date);return `<li class="${x.cls}"><span class="what">${x.what}${x.rule?`<span class="rule">${x.rule}</span>`:""}</span><span class="when"><span class="date">${fmtD(x.date)}</span><span class="rel ${rel.late&&x.cls!=="aud"?"late":""}">${rel.t}</span></span></li>`;}).join("")}</ol>
+   <div class="row" style="margin-top:10px"><button class="btn" type="button" id="schedCopy">Kopiuj harmonogram</button></div><div class="toast" id="schedToast"></div>`;
+  document.getElementById("schedCopy").onclick=()=>{const t=schedText();const ts=document.getElementById("schedToast");
+    try{navigator.clipboard.writeText(t).then(()=>{ts.textContent="Skopiowano harmonogram.";},()=>{ts.textContent="Nie udało się skopiować – zaznacz terminy ręcznie.";});}catch(e){ts.textContent="Nie udało się skopiować – zaznacz terminy ręcznie.";}};
+}
+function addMonthsFrom(d,n){const y=d.getFullYear(),m=d.getMonth()+n;const last=new Date(y,m+1,0).getDate();return new Date(y,m,Math.min(d.getDate(),last));}
+function schedText(){const r=schedule();if(!r.rows)return "";
+  return [`HARMONOGRAM PRZESŁUCHANIA (${r.c.label}${r.seat&&r.sel==="auto"?" – "+roleLabel(r.seat)+", "+r.seat.secName:""})`,...r.rows.map(x=>`- ${x.what}: ${fmtD(x.date)}`)].join("\n");}
+/* Kalendarz wyboru daty */
+const MONTHS=["styczeń","luty","marzec","kwiecień","maj","czerwiec","lipiec","sierpień","wrzesień","październik","listopad","grudzień"];
+const WD=["Pn","Wt","Śr","Cz","Pt","So","Nd"];
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+function makeDp(o){
+  const btn=document.getElementById(o.btn),pop=document.getElementById(o.pop),inp=document.getElementById(o.input),txt=document.getElementById(o.txt);let view=null;
+  function set(d){inp.value=d?iso(d):"";txt.textContent=d?fmtD(d):o.ph;txt.className=d?"":"ph";o.onChange();}
+  function draw(){
+    const y=view.getFullYear(),m=view.getMonth();const cur=parseD(inp.value),t0=today0();
+    const first=new Date(y,m,1);const lead=(first.getDay()+6)%7;const start=new Date(y,m,1-lead);
+    let cells="";for(let i=0;i<42;i++){const d=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i);const wd=(d.getDay()+6)%7;
+      const c=["dp-day"];if(d.getMonth()!==m)c.push("out");if(wd>4)c.push("we");if(+d===+t0)c.push("today");if(cur&&+d===+cur)c.push("on");
+      cells+=`<button type="button" class="${c.join(" ")}" data-d="${iso(d)}" aria-label="${fmtD(d)}"${cur&&+d===+cur?' aria-pressed="true"':""}>${d.getDate()}</button>`;}
+    pop.innerHTML=`<div class="dp-head"><button type="button" class="dp-nav" data-nav="-12" aria-label="Poprzedni rok">«</button><button type="button" class="dp-nav" data-nav="-1" aria-label="Poprzedni miesiąc">‹</button><div class="ttl">${MONTHS[m]} ${y}</div><button type="button" class="dp-nav" data-nav="1" aria-label="Następny miesiąc">›</button><button type="button" class="dp-nav" data-nav="12" aria-label="Następny rok">»</button></div>
+     <div class="dp-grid">${WD.map((w,i)=>`<div class="wd${i>4?" we":""}">${w}</div>`).join("")}${cells}</div>
+     <div class="dp-foot"><button type="button" data-act="today">Dzisiaj</button><button type="button" data-act="clear">${o.clearTxt||"Wyczyść"}</button></div>`;
+  }
+  function open(){const cur=parseD(inp.value)||today0();view=new Date(cur.getFullYear(),cur.getMonth(),1);draw();pop.hidden=false;btn.setAttribute("aria-expanded","true");
+    const f=pop.querySelector(".dp-day.on")||pop.querySelector(".dp-day.today");if(f)f.focus();}
+  function close(fb){pop.hidden=true;btn.setAttribute("aria-expanded","false");if(fb)btn.focus();}
+  btn.addEventListener("click",()=>{if(pop.hidden)open();else close();});
+  pop.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+    if(b.dataset.nav){view=new Date(view.getFullYear(),view.getMonth()+(+b.dataset.nav),1);draw();return;}
+    if(b.dataset.act==="today"){if(o.todayPicks){set(today0());close(true);return;}const t=today0();view=new Date(t.getFullYear(),t.getMonth(),1);draw();return;}
+    if(b.dataset.act==="clear"){set(null);close(true);return;}
+    if(b.dataset.d){set(parseD(b.dataset.d));close(true);}});
+  pop.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){close(true);return;}
+    const b=e.target.closest(".dp-day");if(!b)return;const mv={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[e.key];if(!mv)return;e.preventDefault();
+    const d=addDays(parseD(b.dataset.d),mv);if(d.getMonth()!==view.getMonth()){view=new Date(d.getFullYear(),d.getMonth(),1);draw();}
+    const n=pop.querySelector(`[data-d="${iso(d)}"]`);if(n)n.focus();});
+  document.addEventListener("pointerdown",e=>{if(!pop.hidden&&!e.target.closest("#"+o.wrap))close();});
+  return {set};
+}
+const audDp=makeDp({btn:"audDateBtn",pop:"dpPop",input:"audDate",txt:"audDateTxt",wrap:"dpAud",ph:"Wybierz datę",onChange:()=>renderSched()});
+const annDp=makeDp({btn:"annDateBtn",pop:"dpPopAnn",input:"annDate",txt:"annDateTxt",wrap:"dpAnn",ph:"dzisiaj",clearTxt:"Wróć do dzisiaj",todayPicks:true,onChange:()=>renderSched()});
+const setAudDate=d=>audDp.set(d);
+document.getElementById("audCat").addEventListener("change",renderSched);
 function setBar(html){const b=document.getElementById("mbar");if(!html){b.hidden=true;b.innerHTML="";return;}b.innerHTML=html;b.hidden=false;
   document.getElementById("mbarBtn").onclick=()=>document.getElementById("panel").scrollIntoView({behavior:"smooth",block:"start"});}
 const NOJS_HTML=(()=>{const nj=document.getElementById("nojs");const h=nj?nj.outerHTML:"";if(nj)nj.remove();return h;})();
@@ -591,6 +803,7 @@ function buildPublicHTML(){
   const md=wrap.querySelector(".modes");if(md)md.hidden=true;
   const mb=wrap.querySelector("#mbar");if(mb){mb.innerHTML="";mb.hidden=true;}
   const sc=wrap.querySelector(".stage-card");sc.classList.remove("zoomed");sc.insertAdjacentHTML("beforebegin",NOJS_HTML);
+  const di=wrap.querySelector("#audDate");if(di){di.removeAttribute("value");}const ai=wrap.querySelector("#annDate");if(ai)ai.removeAttribute("value");const at=wrap.querySelector("#annDateTxt");if(at){at.textContent="dzisiaj";at.className="ph";}const app=wrap.querySelector("#dpPopAnn");if(app){app.innerHTML="";app.hidden=true;}const dt=wrap.querySelector("#audDateTxt");if(dt){dt.textContent="Wybierz datę";dt.className="ph";}const dpp=wrap.querySelector("#dpPop");if(dpp){dpp.innerHTML="";dpp.hidden=true;}const dbn=wrap.querySelector("#audDateBtn");if(dbn)dbn.setAttribute("aria-expanded","false");
   const zb=wrap.querySelector("#zoomBtn");zb.textContent="Powiększ mapę";zb.setAttribute("aria-pressed","false");
   const t=wrap.querySelector("#tip");if(t){t.innerHTML="";t.hidden=true;}
   const d=new Date(),date=`${String(d.getDate()).padStart(2,"0")}.${String(d.getMonth()+1).padStart(2,"0")}.${d.getFullYear()}`;
