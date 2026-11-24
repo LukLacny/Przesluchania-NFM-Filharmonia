@@ -255,29 +255,28 @@ textarea{min-height:90px;font-family:ui-monospace,Menlo,Consolas,monospace;font-
         <h2>Harmonogram przesłuchania</h2>
         <div class="sched-form">
           <div class="field"><label for="audDateBtn">Proponowana data przesłuchania</label>
-            <div class="dp" id="dpAud"><input type="hidden" id="audDate" style="">
+            <div class="dp" id="dpAud"><input type="hidden" id="audDate">
               <button type="button" class="dp-btn" id="audDateBtn" aria-haspopup="dialog" aria-expanded="false"><span id="audDateTxt" class="ph">Wybierz datę</span><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"></rect><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
               <div class="dp-pop" id="dpPop" role="dialog" aria-label="Wybierz datę przesłuchania" hidden=""></div>
             </div></div>
           <div class="field"><label for="audCat">Rodzaj stanowiska</label><select id="audCat">
             <option value="auto">Według stanowiska wybranego na mapie</option>
             <option value="first">Koncertmistrz lub pierwszy głos w dętych, kwintecie i perkusji, harfa</option>
-            <option value="winds">Instrumenty dęte (poza pierwszymi głosami), zastępcy koncertmistrza</option>
+            <option value="winds">Instrumenty dęte (poza pierwszymi głosami), zastępcy koncertmistrza i wiolonczel</option>
             <option value="tutti">Muzyk tutti</option>
           </select></div>
         </div>
         <div class="early" id="earlyBox">
           <div class="early-head">Najwcześniejszy możliwy termin przesłuchania</div>
           <div class="early-row"><span class="early-lbl">Gdyby ogłosić przesłuchanie w dniu:</span>
-            <div class="dp dp-sm" id="dpAnn"><input type="hidden" id="annDate" style="">
+            <div class="dp dp-sm" id="dpAnn"><input type="hidden" id="annDate">
               <button type="button" class="dp-btn" id="annDateBtn" aria-haspopup="dialog" aria-expanded="false" aria-label="Data ogłoszenia"><span id="annDateTxt" class="ph">dzisiaj</span><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"></rect><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
               <div class="dp-pop" id="dpPopAnn" role="dialog" aria-label="Wybierz datę ogłoszenia" hidden=""></div>
             </div></div>
-          <div id="earlyOut"><div class="early-res"><span class="k">Najwcześniejsza możliwa data przesłuchania (minimum 3 mies. od ogłoszenia)</span><span class="v main">środa, 31 marca 2027</span><span class="k">Data przy zalecanym wyprzedzeniu (4 mies.)</span><span class="v">piątek, 30 kwietnia 2027</span></div>
+          <div id="earlyOut"><div class="early-res"><span class="k">Najwcześniejsza możliwa data przesłuchania (minimum 3 mies. od ogłoszenia)</span><span class="v main">środa, 24 lutego 2027</span><span class="k">Data przy zalecanym wyprzedzeniu (4 mies.)</span><span class="v">środa, 24 marca 2027</span></div>
       <div class="row" style="margin-top:8px"><button type="button" class="btn" id="useEarliest">Ustaw najwcześniejszą datę jako datę przesłuchania</button></div></div>
         </div>
-        <div id="schedOut"><p class="cat-line">Terminy dla kategorii: <b>Muzyk tutti</b> – na podstawie stanowiska: Altówka (7) (Altówki)</p><ol class="tl"><li class="rec"><span class="what">Ogłoszenie przesłuchania – termin zalecany<span class="rule">Publikacja w internecie i na stronie orkiestry, 4 mies. przed przesłuchaniem</span></span><span class="when"><span class="date">poniedziałek, 30 listopada 2026</span><span class="rel ">za 6 dni</span></span></li><li class=""><span class="what">Ogłoszenie przesłuchania – najpóźniej<span class="rule">Publikacja w internecie i na stronie orkiestry, minimum 3 mies. przed przesłuchaniem</span></span><span class="when"><span class="date">czwartek, 31 grudnia 2026</span><span class="rel ">za 37 dni</span></span></li><li class=""><span class="what">Zamknięcie przyjmowania zgłoszeń<span class="rule">Najpóźniej 2 mies. przed przesłuchaniem</span></span><span class="when"><span class="date">niedziela, 31 stycznia 2027</span><span class="rel ">za 68 dni</span></span></li><li class=""><span class="what">Wybór kandydatów przez komisję<span class="rule">Komisja ma 1 tydzień od zamknięcia zgłoszeń</span></span><span class="when"><span class="date">niedziela, 7 lutego 2027</span><span class="rel ">za 75 dni</span></span></li><li class=""><span class="what">Wysłanie zaproszeń do kandydatów<span class="rule">Najpóźniej 5 tygodni przed przesłuchaniem</span></span><span class="when"><span class="date">środa, 24 lutego 2027</span><span class="rel ">za 92 dni</span></span></li><li class="aud"><span class="what">Przesłuchanie</span><span class="when"><span class="date">środa, 31 marca 2027</span><span class="rel ">za 127 dni</span></span></li></ol>
-   <div class="row" style="margin-top:10px"><button class="btn" type="button" id="schedCopy">Kopiuj harmonogram</button></div><div class="toast" id="schedToast"></div></div>
+        <div id="schedOut"><p class="cat-line">Terminy dla kategorii: <b>Instrumenty dęte (poza pierwszymi głosami), zastępcy koncertmistrza i wiolonczel</b> – na podstawie stanowiska: Zastępca koncertmistrza (1) (I skrzypce)</p><p class="hint" style="font-size:13.5px">Wpisz proponowaną datę przesłuchania, a narzędzie wyliczy terminy ogłoszenia, zamknięcia zgłoszeń, wyboru kandydatów i wysłania zaproszeń.</p></div>
       </section>
 
       <section class="card legend" aria-label="Legenda">
@@ -286,13 +285,13 @@ textarea{min-height:90px;font-family:ui-monospace,Menlo,Consolas,monospace;font-
           <ul class="keys">
             <li><span class="sw sel"></span><div><b>Stanowisko przesłuchiwane</b><span class="d">Wybrane miejsce (wakat). Nie wchodzi do komisji.</span></div></li>
             <li><span class="sw mand"></span><div><b>Komisja obowiązkowa</b><span class="d">Cała sekcja + Rada Artystyczna + liderzy grup (+ osoba dodana dla nieparzystego składu).</span></div></li>
-            <li><span class="sw add"></span><div><b>Głos dodatkowy</b><span class="d">Liderzy pozostałych grup: mogą przyjść i głosować, udział nieobowiązkowy. Przy przesłuchaniu na koncertmistrza: każdy pozostały członek orkiestry.</span></div></li>
+            <li><span class="sw add"></span><div><b>Głos dodatkowy</b><span class="d">Liderzy pozostałych grup, przy przesłuchaniach w dętych także wszyscy muzycy danej grupy (drewno albo blacha), w kwintecie smyczkowym zastępcy koncertmistrza i wiolonczel, a przy pierwszych głosach w dętych i na kotły także oni: mogą przyjść i głosować, udział nieobowiązkowy. Przy przesłuchaniu na koncertmistrza lub zastępcę koncertmistrza: każdy pozostały członek orkiestry.</span></div></li>
             <li><span class="sw none"></span><div><b>Bez głosu</b><span class="d">Osoba nie jest uprawniona do głosowania w tym przesłuchaniu.</span></div></li>
           </ul>
           <h3>Oznaczenia stałe</h3>
           <ul class="keys">
             <li><span class="sw lead"></span><div><b>Gruba obwódka</b><span class="d">Stanowisko lidera: koncertmistrz, prowadzący, I głos w dętych, tuba, harfa, kotły.</span></div></li>
-            <li><span class="sw lead" style="border-width:1px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--seat-text)">Fl</span><div><b>Skróty włoskie na mapie</b><span class="d">Vl. I / Vl. II – skrzypce I / II (violino), Vla – altówka, Vc – wiolonczela, Cb – kontrabas, Fl – flet, Picc – flet piccolo (Picc / II fl – piccolo ze zmianą na II flet), Ob – obój, C.ingl – rożek angielski (corno inglese), Cl – klarnet (Es – klarnet Es, b – basowy), Fg – fagot, Cfg – kontrafagot, Cor – waltornia, Tr – trąbka, Trb – puzon (b – basowy), Tb – tuba, Arp – harfa, Timp – kotły, Perc – perkusja. Pod skrótem: głos (I, II, III, II/IV) albo funkcja: K – koncertmistrz, ZK – zastępca koncertmistrza, Pr – prowadzący, ZPr – zastępca prowadzącego, liczba – numer miejsca.</span></div></li>
+            <li><span class="sw lead" style="border-width:1px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--seat-text)">Fl</span><div><b>Skróty włoskie na mapie</b><span class="d">Vl. I / Vl. II – skrzypce I / II (violino), Vla – altówka, Vc – wiolonczela, Cb – kontrabas, Fl – flet, Picc – flet piccolo (Picc / II fl – piccolo ze zmianą na II flet), Ob – obój, C.ingl – rożek angielski (corno inglese), Cl – klarnet (Es – klarnet Es, b – basowy), Fg – fagot, Cfg – kontrafagot, Cor – waltornia, Tr – trąbka, Trb – puzon (b – basowy), Tb – tuba, Arp – harfa, Timp – kotły, Perc – perkusja. Pod skrótem: głos (I, II, III, II/IV) albo funkcja: K – koncertmistrz, ZK – zastępca koncertmistrza, Pr – prowadzący, ZPr – zastępca prowadzącego, liczba – numer miejsca (w kwintecie liczony od pierwszego pulpitu, łącznie ze stanowiskami liderów i zastępców, np. I skrzypce tutti od 6).</span></div></li>
             <li><span class="ratag" aria-hidden="true">RA</span><div><b>Znacznik RA</b><span class="d">Członek Rady Artystycznej (manager orkiestry jest pod mapą, poza sceną).</span></div></li>
           </ul>
         </div>
@@ -303,39 +302,40 @@ textarea{min-height:90px;font-family:ui-monospace,Menlo,Consolas,monospace;font-
             <li><b>Komisja obowiązkowa</b> = cała sekcja danej grupy + Rada Artystyczna + liderzy grup:
               <div class="grp">smyczki → liderzy wszystkich grup smyczkowych (koncertmistrzowie i prowadzący I i II skrzypiec, altówek, wiolonczel, kontrabasów);<br>
               dęte drewniane → liderzy fletów, obojów, klarnetów, fagotów;<br>
-              dęte blaszane, perkusja, kotły i harfa → liderzy waltorni, trąbek, puzonów, tuby, kotłów i harfy.</div></li>
+              dęte blaszane → liderzy waltorni, trąbek, puzonów i tuby, harfa oraz jeden kotlista – Kotły (1); drugi kotlista – Kotły (2) – i jeden perkusista (pierwsze stanowisko perkusji spoza Rady Artystycznej) mają głos dodatkowy.</div></li>
             <li><b>Rada Artystyczna</b> (znacznik RA): Koncertmistrz (1), Altówka (3) za smyczki, I fagot (2) za dęte drewniane, I waltornia (2) za dęte blaszane, Perkusja (1), Kontrabas (3) jako inspektor orkiestry oraz manager orkiestry (administracja, poza sceną). Zmiany wprowadza się w trybie „Skład orkiestry”: kliknij miejsce na mapie i wybierz funkcję w Radzie.</li>
-            <li><b>Nieparzysty skład</b>: komisja obowiązkowa musi liczyć nieparzystą liczbę osób. Gdy wychodzi parzysta, narzędzie pokazuje ostrzeżenie i pozwala dodać jedną osobę z prawem głosu przyciskiem „Dodaj do komisji”. Dodana osoba liczy się do komisji obowiązkowej i jest oznaczona na niebiesko.</li>
+            <li><b>Nieparzysty skład</b>: komisja obowiązkowa musi liczyć nieparzystą liczbę osób. Gdy wychodzi parzysta, narzędzie pokazuje ostrzeżenie i pozwala dodać jedną osobę z prawem głosu przyciskiem „Dodaj do komisji”. Dodana osoba liczy się do komisji obowiązkowej i jest oznaczona ciemną zielenią.</li>
             <li><b>Zmiana składu orkiestry</b>: w trybie „Skład orkiestry” można dodawać i usuwać stanowiska w każdej sekcji, np. po przesłuchaniach albo przy powiększeniu lub zmniejszeniu sekcji. Mapa i komisje przeliczają się od razu. Skład jest wspólny: zmianę widzą wszyscy użytkownicy na każdym urządzeniu, ale wprowadzać ją mogą tylko osoby z uprawnieniami edycji. Pozostali widzą ten tryb jako podgląd.</li>
-            <li><b>Głos dodatkowy</b>: na każde przesłuchanie może przyjść lider z dowolnej grupy i głosować. Jego udział nie jest obowiązkowy.</li>
-            <li><b>Wyjątek – koncertmistrz</b>: przy przesłuchaniu na stanowisko koncertmistrza głosuje każdy członek orkiestry, każdy ma jeden pełny głos.</li>
+            <li><b>Głos dodatkowy</b>: na każde przesłuchanie może przyjść lider z dowolnej grupy i głosować. Jego udział nie jest obowiązkowy. Przy przesłuchaniu na dowolne stanowisko w dętych – zarówno pierwszy, jak i dalszy głos – głos dodatkowy ma też każdy muzyk tej samej grupy, który nie jest w komisji obowiązkowej: wszystkie dęte drewniane (flety, oboje, klarnety, fagoty) albo wszystkie dęte blaszane (waltornie, trąbki, puzony, tuba). Przy przesłuchaniach do dętych blaszanych w komisji obowiązkowej jest jeden kotlista – Kotły (1), a głos dodatkowy mają drugi kotlista – Kotły (2) – i jeden perkusista. Przy przesłuchaniu na dowolne stanowisko w kwintecie smyczkowym głos dodatkowy mają też zastępca koncertmistrza i zastępca prowadzącego wiolonczel (gdy przesłuchanie jest w ich własnej sekcji, są w komisji obowiązkowej). Przy przesłuchaniach na pierwsze głosy w dętych drewnianych i blaszanych oraz na kotły głos dodatkowy mają również zastępcy koncertmistrza i zastępca prowadzącego wiolonczel.</li>
+            <li><b>Wyjątek – koncertmistrz i zastępca koncertmistrza</b>: przy przesłuchaniu na stanowisko koncertmistrza lub zastępcy koncertmistrza głosuje każdy członek orkiestry, każdy ma jeden pełny głos.</li>
             <li><b>Harmonogram</b>: pod mapą wpisz proponowaną datę przesłuchania, a narzędzie wyliczy terminy:
               <div class="grp">koncertmistrz, pierwsze głosy w dętych, kwintecie i perkusji (kotły) oraz harfa → ogłoszenie najpóźniej 4 mies. przed (zalecane 6 mies.), zamknięcie zgłoszeń 2 mies. przed, wybór kandydatów do 2 tyg. po zamknięciu, zaproszenia najpóźniej 6 tyg. przed;<br>
-              dęte poza pierwszymi głosami oraz zastępcy koncertmistrza → ogłoszenie najpóźniej 3 mies. przed (zalecane 4 mies.), zamknięcie 2 mies. przed, wybór do 2 tyg. po zamknięciu, zaproszenia najpóźniej 5 tyg. przed;<br>
-              muzycy tutti → jak wyżej, ale komisja ma 1 tydzień na wybór kandydatów.</div></li>
-            <li><b>Wyjątek – perkusja i kotły</b>: przy przesłuchaniu na kotły lub perkusję komisję obowiązkową tworzą: kotły, cała perkusja, Rada Artystyczna oraz wszyscy liderzy dętych drewnianych i blaszanych (fletów, obojów, klarnetów, fagotów, waltorni, trąbek, puzonów i tuby). Pozostali liderzy mają głos dodatkowy, nieobowiązkowy.</li>
-            <li><b>Wyjątek – harfa</b>: harfa należy do grupy perkusji i kotłów i ma osobne stanowisko lidera. Przy przesłuchaniu na harfę komisję obowiązkową tworzą: harfa, Rada Artystyczna oraz liderzy dętych drewnianych, dętych blaszanych i kotłów (perkusja nie ma lidera). Na mapie harfa jest wtedy niebieska z czerwoną obwódką.</li>
+              dęte poza pierwszymi głosami oraz zastępcy koncertmistrza i wiolonczel → ogłoszenie najpóźniej 3 mies. przed (zalecane 4 mies.), zamknięcie 2 mies. przed, wybór do 2 tyg. po zamknięciu, zaproszenia najpóźniej 5 tyg. przed;<br>
+              muzycy tutti → jak wyżej, ale komisja ma 1 tydzień na wybór kandydatów.</div>
+              Po kliknięciu stanowiska narzędzie pokazuje też najwcześniejszą możliwą datę przesłuchania, gdyby ogłosić je dzisiaj (albo w wybranym dniu), oraz datę przy zalecanym wyprzedzeniu. Wszystkie daty przeliczają się codziennie same.</li>
+            <li><b>Wyjątek – perkusja i kotły</b>: przy przesłuchaniu na kotły lub perkusję komisję obowiązkową tworzą: kotły, cała perkusja, Rada Artystyczna oraz wszyscy liderzy dętych drewnianych i blaszanych (fletów, obojów, klarnetów, fagotów, waltorni, trąbek, puzonów i tuby). Pozostali liderzy mają głos dodatkowy, nieobowiązkowy; przy przesłuchaniu na kotły także zastępcy koncertmistrza i zastępca prowadzącego wiolonczel.</li>
+            <li><b>Wyjątek – harfa</b>: harfa należy do grupy perkusji i kotłów i ma osobne stanowisko lidera. Przy przesłuchaniu na harfę komisję obowiązkową tworzą: harfa, Rada Artystyczna oraz liderzy dętych drewnianych, dętych blaszanych i kotłów (perkusja nie ma lidera). Na mapie harfa jest wtedy ciemnozielona z czerwoną obwódką.</li>
           </ol>
         </div>
       </section>
     </div>
 
     <aside class="card panel" id="panel" aria-live="polite"></aside>
-<div id="tip" role="tooltip" style="left: 606.32px; top: 534.91px;" hidden=""></div>
+<div id="tip" role="tooltip" style="left: 365.85px; top: 658.32px;" hidden=""></div>
 <div id="mbar" hidden=""></div>
   </div>
-</div><script>window.__NFM_PUBLIC__={"cfg":{"counts":{"vn1":[3,2,14],"vn2":[2,12],"vla":[2,12],"vc":[2,1,9],"cb":[2,6],"fl":[2,1,1],"ob":[2,1,1],"cl":[2,1,1],"fg":[2,1,1],"hn":[3,2,2],"tp":[2,3],"tb":[2,1,1],"tu":[1],"hp":[1],"perc":[4],"timp":[2]},"rada":{"cm":"vn1-0-1","str":"vla-1-1","wood":"fg-0-2","brass":"hn-0-2","perc":"perc-0-1","insp":"cb-1-1"}},"date":"24.11.2026"};</script><script>
+</div><script>window.__NFM_PUBLIC__={"cfg":{"counts":{"vn1":[3,2,14],"vn2":[2,12],"vla":[2,12],"vc":[2,1,10],"cb":[2,6],"fl":[2,1,1],"ob":[2,1,1],"cl":[2,1,1],"fg":[2,1,1],"hn":[3,2,2],"tp":[2,3],"tb":[2,1,1],"tu":[1],"hp":[1],"perc":[4],"timp":[2]},"rada":{"cm":"vn1-0-1","str":"vla-1-1","wood":"fg-0-2","brass":"hn-0-2","perc":"perc-0-1","insp":"cb-1-1"}},"date":"24.11.2026"};</script><script>
 (function(){
 const NS="http://www.w3.org/2000/svg";
 const FAM_NAMES={perc:"perkusja i kotły (wyjątek)",harp:"harfa (wyjątek)",str:"smyczki",wood:"dęte drewniane",brass:"dęte blaszane, perkusja, kotły i harfa"};
-const FAM_LEADERS={perc:"Liderzy dętych drewnianych i blaszanych",harp:"Liderzy dętych drewnianych, blaszanych i kotłów",str:"Liderzy grup smyczkowych",wood:"Liderzy dętych drewnianych",brass:"Liderzy dętych blaszanych, kotłów i harfy"};
+const FAM_LEADERS={perc:"Liderzy dętych drewnianych i blaszanych",harp:"Liderzy dętych drewnianych, blaszanych i kotłów",str:"Liderzy grup smyczkowych",wood:"Liderzy dętych drewnianych",brass:"Liderzy dętych blaszanych, harfa i kotły (1)"};
 
 /* Skład orkiestry: role w kolejności miejsc (liderzy najbliżej dyrygenta / środka). n = liczba domyślna */
 const SECTIONS=[
  {id:"vn1",name:"I skrzypce",fam:"str",roles:[{c:"K",r:"Koncertmistrz",f:"Koncertmistrz",n:3,lead:1,cm:1},{c:"ZK",r:"Zastępca koncertmistrza",f:"Zastępca koncertmistrza",n:2},{c:"#",r:"I skrzypce",f:"I skrzypce – tutti",n:14}]},
  {id:"vn2",name:"II skrzypce",fam:"str",roles:[{c:"Pr",r:"Prowadzący II skrzypiec",f:"II skrzypce – lider (prowadzący)",n:2,lead:1},{c:"#",r:"II skrzypce",f:"II skrzypce – tutti",n:12}]},
  {id:"vla",name:"Altówki",fam:"str",roles:[{c:"Pr",r:"Prowadzący altówek",f:"Altówka – lider (prowadzący)",n:2,lead:1},{c:"#",r:"Altówka",f:"Altówka – tutti",n:12}]},
- {id:"vc",name:"Wiolonczele",fam:"str",roles:[{c:"Pr",r:"Prowadzący wiolonczel",f:"Wiolonczela – lider (prowadzący)",n:2,lead:1},{c:"ZPr",r:"Zastępca prowadzącego wiolonczel",f:"Wiolonczela – zastępca prowadzącego",n:1},{c:"#",r:"Wiolonczela",f:"Wiolonczela – tutti",n:9}]},
+ {id:"vc",name:"Wiolonczele",fam:"str",roles:[{c:"Pr",r:"Prowadzący wiolonczel",f:"Wiolonczela – lider (prowadzący)",n:2,lead:1},{c:"ZPr",r:"Zastępca prowadzącego wiolonczel",f:"Wiolonczela – zastępca prowadzącego",n:1},{c:"#",r:"Wiolonczela",f:"Wiolonczela – tutti",n:10}]},
  {id:"cb",name:"Kontrabasy",fam:"str",roles:[{c:"Pr",r:"Prowadzący kontrabasów",f:"Kontrabas – lider (prowadzący)",n:2,lead:1},{c:"#",r:"Kontrabas",f:"Kontrabas – tutti",n:6}]},
  {id:"fl",name:"Flety",fam:"wood",roles:[{c:"I",r:"I flet",f:"Flet – lider (I flet)",n:2,lead:1},{c:"II",r:"II flet",f:"II flet",n:1},{c:"Picc",r:"Flet piccolo",f:"Flet piccolo",n:1}]},
  {id:"ob",name:"Oboje",fam:"wood",roles:[{c:"I",r:"I obój",f:"Obój – lider (I obój)",n:2,lead:1},{c:"II",r:"II obój",f:"II obój",n:1},{c:"Ra",r:"Rożek angielski",f:"Rożek angielski",n:1}]},
@@ -460,6 +460,7 @@ function buildSeats(){
 }
 const OFF=[{id:"mgr",role:"Manager orkiestry"}];
 const famOf=secId=>SEC[secId].fam;
+const isDep=s=>(s.sec==="vn1"&&s.rc==="ZK")||(s.sec==="vc"&&s.rc==="ZPr");
 const radaSlotOf=id=>{for(const k in cfg.rada)if(cfg.rada[k]===id)return k;return null;};
 const roleLabel=s=>s.role+(s.num?` (${s.num})`:"");
 const whoFull=s=>`${roleLabel(s)} – ${s.secName}`;
@@ -504,21 +505,27 @@ let mode="audit", selected=null, editing=null;
 const added=new Set();
 
 function compute(selId){
-  const sel=byId[selId],fam=sel.sec==="hp"?"harp":(sel.sec==="perc"||sel.sec==="timp")?"perc":famOf(sel.sec),cmEx=sel.cm,st={};
+  const sel=byId[selId],fam=sel.sec==="hp"?"harp":(sel.sec==="perc"||sel.sec==="timp")?"perc":famOf(sel.sec),cmEx=sel.cm||(sel.sec==="vn1"&&sel.rc==="ZK"),st={};
   const radaIds=new Set(Object.values(cfg.rada).filter(Boolean));
+  const WOOD=["fl","ob","cl","fg"],BRASS=["hn","tp","tb","tu"];
+  const windFam=WOOD.includes(sel.sec)?WOOD:BRASS.includes(sel.sec)?BRASS:null;
+  const brassAud=BRASS.includes(sel.sec);const timpMand=(seats.find(x=>x.sec==="timp")||{}).id;const percOpt=(seats.find(x=>x.sec==="perc"&&!radaIds.has(x.id))||{}).id;
   seats.forEach(s=>{let v;
     if(s.id===selId)v=fam==="harp"?"selm":"sel";
     else if(s.sec===sel.sec||(fam==="perc"&&(s.sec==="perc"||s.sec==="timp")))v="sec";
     else if(radaIds.has(s.id))v="rada";
-    else if(s.lead&&(fam==="perc"?["fl","ob","cl","fg","hn","tp","tb","tu"].includes(s.sec):fam==="harp"?["wood","brass"].includes(famOf(s.sec)):famOf(s.sec)===fam))v="fam";
+    else if(s.lead&&(fam==="perc"?["fl","ob","cl","fg","hn","tp","tb","tu"].includes(s.sec):fam==="harp"?["wood","brass"].includes(famOf(s.sec)):famOf(s.sec)===fam)&&!(brassAud&&s.sec==="timp"&&s.id!==timpMand))v="fam";
     else if(added.has(s.id))v="addm";
+    else if(windFam&&windFam.includes(s.sec))v="opt";
+    else if(brassAud&&(s.sec==="timp"||s.id===percOpt))v="opt";
+    else if(!cmEx&&isDep(s)&&(fam==="str"||(windFam&&sel.lead)||sel.sec==="timp"))v="opt";
     else if(cmEx)v="all";
     else if(s.lead)v="opt";
     else v="none";
     st[s.id]=v;});
-  return {sel,fam,cmEx,st};
+  return {sel,fam,cmEx,st,windFam};
 }
-const ST_TXT={sel:"przesłuchiwane stanowisko",selm:"przesłuchiwane stanowisko · harfa w komisji obowiązkowej",sec:"komisja obowiązkowa (sekcja)",rada:"komisja obowiązkowa (Rada Artystyczna)",fam:"komisja obowiązkowa (lider grupy)",addm:"komisja obowiązkowa (dodany do nieparzystego składu)",opt:"głos dodatkowy, nieobowiązkowy",all:"głos dodatkowy (wyjątek: koncertmistrz)",none:"bez głosu"};
+const ST_TXT={sel:"przesłuchiwane stanowisko",selm:"przesłuchiwane stanowisko · harfa w komisji obowiązkowej",sec:"komisja obowiązkowa (sekcja)",rada:"komisja obowiązkowa (Rada Artystyczna)",fam:"komisja obowiązkowa (lider grupy)",addm:"komisja obowiązkowa (dodany do nieparzystego składu)",opt:"głos dodatkowy, nieobowiązkowy",all:"głos dodatkowy (wyjątek: koncertmistrz / zastępca koncertmistrza)",none:"bez głosu"};
 
 function paint(res){
   seats.forEach(s=>{
@@ -558,7 +565,8 @@ function renderAudit(){
   const p=document.getElementById("panel");p.classList.remove("ro-mode");
   if(!selected){setBar(null);paint(null);p.innerHTML=`<div class="eyebrow">Przesłuchanie</div><div class="target">Wybierz stanowisko</div><p class="hint" style="font-size:14px;margin-top:8px">Kliknij miejsce na mapie orkiestry, na które odbywa się przesłuchanie. Mapa pokoloruje skład komisji obowiązkowej i osoby z głosem dodatkowym, a tutaj pojawi się pełna lista.</p><p class="hint" style="font-size:14px">Kliknięcie <b>Dyrygenta</b> czyści wybór i przywraca mapę bez kolorów.</p>`;return;}
   const res=compute(selected);paint(res);
-  const {sel,fam,cmEx,st}=res;
+  const {sel,fam,cmEx,st,windFam}=res;
+  const optLbl=windFam?`Głos dodatkowy – liderzy innych grup, muzycy ${windFam[0]==="fl"?"dętych drewnianych":"dętych blaszanych, kotły (2) i perkusja"}${sel.lead?" oraz zastępcy koncertmistrza i wiolonczel":""}`:fam==="str"?"Głos dodatkowy – liderzy innych grup i zastępcy (koncertmistrza, wiolonczel)":sel.sec==="timp"?"Głos dodatkowy – liderzy innych grup oraz zastępcy koncertmistrza i wiolonczel":"Głos dodatkowy – liderzy innych grup";
   const of=v=>seats.filter(s=>st[s.id]===v);
   const secL=seats.filter(s=>st[s.id]==="sec"||st[s.id]==="selm"),famL=of("fam"),optL=of("opt"),allL=of("all"),radaSeatL=of("rada"),addL=of("addm");
   const extraL=cmEx?allL:optL;
@@ -589,13 +597,13 @@ function renderAudit(){
    ${odd?"":`<div class="warn parity"><b>Komisja obowiązkowa liczy ${mandatory} osób – to liczba parzysta.</b> Należy dodać jedną osobę z prawem głosu, aby skład był nieparzysty. Wybierz ją z listy „${cmEx?"Pozostali członkowie orkiestry":"Głos dodatkowy"}” poniżej przyciskiem „Dodaj do komisji”.</div>`}
    ${fam==="perc"?`<div class="exc" style="border-color:var(--mand);background:color-mix(in srgb,var(--mand) 10%,transparent)"><b>Wyjątek – perkusja i kotły.</b> Komisję obowiązkową tworzą: kotły, cała perkusja, Rada Artystyczna oraz wszyscy liderzy dętych drewnianych i blaszanych. Pozostali liderzy mają głos dodatkowy.</div>`:""}
    ${fam==="harp"?`<div class="exc" style="border-color:var(--mand);background:color-mix(in srgb,var(--mand) 10%,transparent)"><b>Wyjątek – harfa.</b> Komisję obowiązkową tworzą: harfa, Rada Artystyczna oraz liderzy dętych drewnianych, dętych blaszanych i kotłów.</div>`:""}
-   ${cmEx?`<div class="exc"><b>Wyjątek – koncertmistrz.</b> Głosuje każdy członek orkiestry, każdy ma jeden pełny głos. Komisja obowiązkowa jest zachowana i zaznaczona osobno.</div>`:""}
+   ${cmEx?`<div class="exc"><b>Wyjątek – ${sel.cm?"koncertmistrz":"zastępca koncertmistrza"}.</b> Głosuje każdy członek orkiestry, każdy ma jeden pełny głos. Komisja obowiązkowa jest zachowana i zaznaczona osobno.</div>`:""}
    ${warns.map(w=>`<div class="warn">${esc(w)}</div>`).join("")}
    <details open><summary><span class="dot" style="background:var(--mand)"></span>Sekcja: ${fam==="perc"?"Perkusja i kotły":esc(sel.secName)} <span class="cnt">${secL.length}</span></summary>${plist(secL,false)}</details>
    <details open><summary><span class="dot" style="background:var(--mand)"></span>Rada Artystyczna <span class="cnt">${radaCount} + w sekcji ${RADA_SLOTS.filter(sl=>st[cfg.rada[sl.k]]==="sec").length}</span></summary><ul class="radalist">${radaRows}</ul></details>
    <details open><summary><span class="dot" style="background:var(--mand)"></span>${FAM_LEADERS[fam]} <span class="cnt">${famL.length}</span></summary>${plist(famL,true)}</details>
    ${addL.length?`<details open><summary><span class="dot" style="background:var(--mand)"></span>Dodani do komisji (nieparzysty skład) <span class="cnt">${addL.length}</span></summary>${plist(addL,true,true)}</details>`:""}
-   <details ${odd?"":"open"}><summary><span class="dot" style="background:var(--add)"></span>${cmEx?"Pozostali członkowie orkiestry":"Głos dodatkowy – liderzy innych grup"} <span class="cnt">${extra}</span></summary>${cmEx?"":`<p class="hint">Udział nieobowiązkowy. Jeśli lider przyjdzie, ma prawo głosu.</p>`}${plist(extraL,true,true)}</details>
+   <details ${odd?"":"open"}><summary><span class="dot" style="background:var(--add)"></span>${cmEx?"Pozostali członkowie orkiestry":""+""+optLbl+""} <span class="cnt">${extra}</span></summary>${cmEx?"":`<p class="hint">${windFam?`Udział nieobowiązkowy. Na przesłuchanie w dętych może przyjść i głosować każdy muzyk ${windFam[0]==="fl"?"dętych drewnianych":"dętych blaszanych, drugi kotlista i jeden perkusista"} oraz lider dowolnej grupy${sel.lead?"; na pierwsze głosy także zastępcy koncertmistrza i wiolonczel":""}.`:fam==="str"?"Udział nieobowiązkowy. Na przesłuchanie w kwintecie smyczkowym może przyjść i głosować każdy zastępca koncertmistrza, zastępca prowadzącego wiolonczel oraz lider dowolnej grupy.":sel.sec==="timp"?"Udział nieobowiązkowy. Na przesłuchanie na kotły może przyjść i głosować lider dowolnej grupy oraz zastępcy koncertmistrza i zastępca prowadzącego wiolonczel.":"Udział nieobowiązkowy. Jeśli lider przyjdzie, ma prawo głosu."}</p>`}${plist(extraL,true,true)}</details>
    <div class="row"><button class="btn primary" type="button" id="copyBtn">Kopiuj skład komisji</button></div>
    <div class="toast" id="toast"></div>
    <textarea id="copyFallback" hidden readonly aria-label="Skład komisji do skopiowania"></textarea>`;
@@ -604,10 +612,10 @@ function renderAudit(){
 }
 
 function buildText(res,d){
-  const {sel,fam,cmEx,st}=res;const L=[];
+  const {sel,fam,cmEx,st,windFam}=res;const L=[];
   L.push(`SKŁAD KOMISJI – przesłuchanie na stanowisko: ${roleLabel(sel)} (${sel.secName})`);
   L.push(`Komisja obowiązkowa: ${d.mandatory} os. (${d.odd?"nieparzysta":"PARZYSTA – należy dodać osobę"}) | ${cmEx?"pozostali członkowie orkiestry":"głosy dodatkowe"}: ${d.extra} | maks. głosujących: ${d.total}`);
-  if(cmEx)L.push("Wyjątek: przesłuchanie na koncertmistrza – głosuje każdy członek orkiestry (1 pełny głos).");
+  if(cmEx)L.push("Wyjątek: przesłuchanie na "+(sel.cm?"koncertmistrza":"zastępcę koncertmistrza")+" – głosuje każdy członek orkiestry (1 pełny głos).");
   if(fam==="perc")L.push("Wyjątek: perkusja i kotły – komisja: kotły, cała perkusja, Rada Artystyczna, wszyscy liderzy dętych drewnianych i blaszanych.");
   if(fam==="harp")L.push("Wyjątek: harfa – komisja: harfa, Rada Artystyczna, liderzy dętych drewnianych, blaszanych i kotłów.");
   L.push("",`1. Sekcja (${fam==="perc"?"Perkusja i kotły":sel.secName}):`);d.secL.forEach(s=>L.push("   - "+roleLabel(s)));
@@ -618,7 +626,7 @@ function buildText(res,d){
   let n=4;
   if(d.addL.length){L.push("",`${n++}. Dodani do komisji (nieparzysty skład):`);d.addL.forEach(s=>L.push("   - "+whoFull(s)));}
   const sch=schedText();
-  L.push("",`${n}. ${cmEx?"Pozostali członkowie orkiestry (głos)":"Głos dodatkowy (udział nieobowiązkowy) – liderzy innych grup"}:`);d.extraL.forEach(s=>L.push("   - "+whoFull(s)));
+  L.push("",`${n}. ${cmEx?"Pozostali członkowie orkiestry (głos)":"Głos dodatkowy (udział nieobowiązkowy) – liderzy innych grup"+(windFam?(windFam[0]==="fl"?" i muzycy dętych drewnianych":" i muzycy dętych blaszanych, kotły (2) i perkusja"):fam==="str"?" i zastępcy (koncertmistrza, wiolonczel)":sel.sec==="timp"?" oraz zastępcy koncertmistrza i wiolonczel":"")+(windFam&&sel.lead?" oraz zastępcy koncertmistrza i wiolonczel":"")+""}:`);d.extraL.forEach(s=>L.push("   - "+whoFull(s)));
   if(sch)L.push("",sch);
   return L.join("\n");
 }
@@ -693,11 +701,11 @@ if(PUB){document.getElementById("modeEdit").hidden=true;document.querySelector("
 /* Harmonogram przesłuchania */
 const CATS={
   first:{label:"Koncertmistrz lub pierwszy głos w dętych, kwintecie i perkusji, harfa",annMin:4,annRec:6,closeM:2,selD:14,invW:6},
-  winds:{label:"Instrumenty dęte (poza pierwszymi głosami), zastępcy koncertmistrza",annMin:3,annRec:4,closeM:2,selD:14,invW:5},
+  winds:{label:"Instrumenty dęte (poza pierwszymi głosami), zastępcy koncertmistrza i wiolonczel",annMin:3,annRec:4,closeM:2,selD:14,invW:5},
   tutti:{label:"Muzyk tutti",annMin:3,annRec:4,closeM:2,selD:7,invW:5}
 };
 const WIND_SECS=["fl","ob","cl","fg","hn","tp","tb","tu"];
-const catOfSeat=s=>s.lead?"first":(WIND_SECS.includes(s.sec)||(s.sec==="vn1"&&s.rc==="ZK"))?"winds":"tutti";
+const catOfSeat=s=>s.lead?"first":(WIND_SECS.includes(s.sec)||isDep(s))?"winds":"tutti";
 const dfmt=new Intl.DateTimeFormat("pl-PL",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
 const fmtD=d=>dfmt.format(d);
 function parseD(v){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||"");return m?new Date(+m[1],+m[2]-1,+m[3]):null;}
